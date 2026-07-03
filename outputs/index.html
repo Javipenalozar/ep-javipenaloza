@@ -1,0 +1,552 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PROGRAMA DE LIDERAZGO ES POSIBLE EP</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="portal-shell">
+      <aside class="sidebar" aria-label="Menu del portal">
+        <a href="#panel" class="brand">
+          <span class="brand-mark">JP</span>
+          <span>
+            <strong>EP</strong>
+            <small>Liderazgo es posible</small>
+          </span>
+        </a>
+
+        <nav class="side-nav">
+          <a href="#panel" class="active">Panel</a>
+          <a href="#semana">Mi semana</a>
+          <a href="#indicadores">Indicadores</a>
+          <a href="#carta">Carta de logros</a>
+          <a href="#niveles">Niveles</a>
+          <a href="#reflexion">Reflexión</a>
+          <a href="#staff">Staff admin</a>
+          <a href="#acompanamiento">Acompañamiento</a>
+          <a href="#recursos">Recursos</a>
+        </nav>
+
+        <div class="sidebar-progress">
+          <span id="overallScore">0%</span>
+          <small>avance integral</small>
+          <div class="progress-track"><i id="overallBar"></i></div>
+        </div>
+      </aside>
+
+      <main class="portal-main">
+        <header class="workspace-header" id="panel">
+          <div>
+            <span class="eyebrow">Programa de liderazgo es posible EP</span>
+            <h1>Tu centro de avance</h1>
+            <p>Registra tu proceso, mide cambios y desbloquea cada nivel despues de vivir su fin de semana.</p>
+          </div>
+          <div class="profile-card">
+            <img src="assets/level-valioso.png" alt="Imagen conceptual del portal" />
+            <div>
+              <strong id="participantName">Participante</strong>
+              <small>Semana activa: <span id="activeWeekLabel">Semana 1</span></small>
+            </div>
+          </div>
+        </header>
+
+        <section class="today-grid" aria-label="Resumen de hoy">
+          <article class="today-card primary-card">
+            <span class="card-label">Siguiente accion</span>
+            <h2>Completar tu evidencia semanal</h2>
+            <p>Escribe un logro observable, un aprendizaje y un reto medible para la proxima semana.</p>
+            <a href="#semana" class="action-link">Ir a mi semana</a>
+          </article>
+          <article class="today-card">
+            <span class="card-label">Carta</span>
+            <strong id="letterStatus">Pendiente</strong>
+            <p>Define metas comparables: hoy, meta y evidencia.</p>
+          </article>
+          <article class="today-card">
+            <span class="card-label">Fases completas</span>
+            <strong id="completedLevels">0/6</strong>
+            <p>Marca cada experiencia vivida y registra su integracion.</p>
+          </article>
+          <article class="today-card">
+            <span class="card-label">Proximo desbloqueo</span>
+            <strong id="nextUnlockDate">6 Jul</strong>
+            <p id="nextUnlockLabel">Nivel 1 Valioso</p>
+          </article>
+        </section>
+
+        <section class="level-message" id="valiosoWelcome" hidden>
+          <div>
+            <span class="eyebrow">Mensaje del lunes</span>
+            <h2>Lo lograste: pasaste el nivel Valioso</h2>
+            <p>
+              Creaste equipo, le diste un nombre, levantaste un grito de guerra,
+              jugaste Rojo Negro, hablaste con mama y papa, diste abrazos y elegiste
+              4: no darle mas la espalda a las personas, no quedarte solo mirandolas,
+              sino acercarte y abrazarlas.
+            </p>
+            <p>
+              Comenzaste. Dedicaste un fin de semana completo para ti. Bienvenid@ a
+              este mundo de transformacion personal.
+            </p>
+          </div>
+          <div class="message-actions">
+            <strong>Elige 4</strong>
+            <a href="#reflexion" class="action-link">Registrar que me llevo</a>
+          </div>
+        </section>
+
+        <section class="portal-section" id="semana">
+          <div class="section-title">
+            <div>
+              <span class="eyebrow">Bitacora de proceso</span>
+              <h2>Mi semana</h2>
+            </div>
+            <button type="button" id="saveEvidence">Guardar evidencia</button>
+          </div>
+
+          <div class="work-panel">
+            <label>
+              Semana actual
+              <select id="weekSelect">
+                <option>Semana 1</option>
+                <option>Semana 2</option>
+                <option>Semana 3</option>
+                <option>Semana 4</option>
+                <option>Semana 5</option>
+                <option>Semana 6</option>
+                <option>Semana 7</option>
+                <option>Semana 8</option>
+                <option>Semana 9</option>
+                <option>Semana 10</option>
+                <option>Semana 11</option>
+                <option>Semana 12</option>
+                <option>Semana 13</option>
+                <option>Semana 14</option>
+                <option>Semana 15</option>
+                <option>Semana 16</option>
+              </select>
+            </label>
+            <label>
+              Logro observable
+              <textarea id="weeklyWin" rows="5" placeholder="Esta semana logre..."></textarea>
+            </label>
+            <label>
+              Aprendizaje
+              <textarea id="weeklyLearning" rows="5" placeholder="Me di cuenta de..."></textarea>
+            </label>
+            <label>
+              Proximo reto medible
+              <textarea id="weeklyChallenge" rows="5" placeholder="Mi siguiente accion medible sera..."></textarea>
+            </label>
+          </div>
+        </section>
+
+        <section class="portal-section" id="indicadores">
+          <div class="section-title">
+            <div>
+              <span class="eyebrow">Medicion viva</span>
+              <h2>Indicadores de avance</h2>
+            </div>
+          </div>
+
+          <div class="metrics-grid">
+            <article class="metric-card" data-metric="identidad">
+              <div class="metric-title">
+                <span>Identidad</span>
+                <strong data-value>0%</strong>
+              </div>
+              <input type="range" min="0" max="100" value="20" />
+              <p>Valores, talentos, heridas, limites y nueva historia personal.</p>
+            </article>
+            <article class="metric-card" data-metric="emociones">
+              <div class="metric-title">
+                <span>Gestion emocional</span>
+                <strong data-value>0%</strong>
+              </div>
+              <input type="range" min="0" max="100" value="25" />
+              <p>Reconocer, regular y transformar emociones que antes paralizaban.</p>
+            </article>
+            <article class="metric-card" data-metric="retos">
+              <div class="metric-title">
+                <span>Retos asumidos</span>
+                <strong data-value>0%</strong>
+              </div>
+              <input type="range" min="0" max="100" value="15" />
+              <p>Acciones tomadas aun con incomodidad, miedo o incertidumbre.</p>
+            </article>
+            <article class="metric-card" data-metric="servicio">
+              <div class="metric-title">
+                <span>Servicio e influencia</span>
+                <strong data-value>0%</strong>
+              </div>
+              <input type="range" min="0" max="100" value="10" />
+              <p>Impacto positivo en familia, equipo, comunidad o proyecto.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="portal-section" id="carta">
+          <div class="section-title">
+            <div>
+              <span class="eyebrow">Contrato contigo</span>
+              <h2>Carta de logros medible</h2>
+            </div>
+            <div class="section-actions">
+              <button type="button" id="saveLetter">Guardar carta</button>
+              <button type="button" class="quiet-button" id="printLetter">PDF</button>
+            </div>
+          </div>
+
+          <form class="letter-form" id="achievementForm">
+            <div class="form-row">
+              <label>
+                Nombre
+                <input name="name" placeholder="Tu nombre" />
+              </label>
+              <label>
+                Fecha meta
+                <input name="date" type="date" />
+              </label>
+            </div>
+
+            <label>
+              Declaracion principal
+              <textarea name="declaration" rows="4" placeholder="Al finalizar este programa, me comprometo a demostrar..."></textarea>
+            </label>
+
+            <div class="goal-table" aria-label="Indicadores medibles de la carta">
+              <div class="table-head">Area</div>
+              <div class="table-head">Hoy</div>
+              <div class="table-head">Meta</div>
+              <div class="table-head">Evidencia</div>
+
+              <input name="area1" value="Gestion emocional" />
+              <input name="today1" placeholder="Ej: 4/10" />
+              <input name="target1" placeholder="Ej: 8/10" />
+              <input name="proof1" placeholder="Ej: 3 conversaciones dificiles realizadas" />
+
+              <input name="area2" value="Habitos de liderazgo" />
+              <input name="today2" placeholder="Ej: 2 dias/semana" />
+              <input name="target2" placeholder="Ej: 5 dias/semana" />
+              <input name="proof2" placeholder="Ej: bitacora semanal completa" />
+
+              <input name="area3" value="Relacion conmigo" />
+              <input name="today3" placeholder="Ej: 5/10" />
+              <input name="target3" placeholder="Ej: 9/10" />
+              <input name="proof3" placeholder="Ej: carta de perdon + accion de autocuidado" />
+            </div>
+
+            <div class="form-row">
+              <label>
+                Compromiso semanal
+                <textarea name="weekly" rows="3" placeholder="Cada semana voy a..."></textarea>
+              </label>
+              <label>
+                Persona testigo
+                <textarea name="witness" rows="3" placeholder="Quien puede confirmar mis avances y como lo hara..."></textarea>
+              </label>
+            </div>
+          </form>
+        </section>
+
+        <section class="portal-section" id="niveles">
+          <div class="section-title">
+            <div>
+              <span class="eyebrow">Ruta del programa</span>
+              <h2>Niveles e integracion</h2>
+            </div>
+          </div>
+
+          <div class="schedule-strip" aria-label="Calendario del programa">
+            <span>4-5 Jul</span>
+            <span>8-9 Ago</span>
+            <span>29-30 Ago</span>
+            <span>12-13 Sep</span>
+            <span>24 Sep · 5pm-10pm</span>
+            <span>17-18 Oct</span>
+          </div>
+
+          <nav class="level-tabs" aria-label="Pestañas de niveles">
+            <a href="#nivel-valioso">Valioso</a>
+            <a href="#nivel-valiente-1">Valiente I</a>
+            <a href="#nivel-valiente-2">Valiente II</a>
+            <a href="#nivel-poderoso">Poderoso</a>
+            <a href="#nivel-confianza">Confianza</a>
+            <a href="#nivel-supervivencia">Supervivencia</a>
+          </nav>
+
+          <div class="levels-list">
+            <article class="level-row" id="nivel-valioso" data-unlock="2026-07-06" data-level-name="Nivel 1 Valioso">
+              <img src="assets/level-valioso.png" alt="Imagen conceptual del nivel Valioso" />
+              <div>
+                <span>Nivel 1 · 4-5 de julio</span>
+                <h3>Valioso</h3>
+                <p>Conexion con tu ser, talentos, valores, heridas y creencias que ya no suman.</p>
+                <small class="unlock-note">Se desbloquea el 6 de julio.</small>
+              </div>
+              <label class="check-pill"><input type="checkbox" data-check="nivel1" /> Completo</label>
+            </article>
+            <article class="level-row" id="nivel-valiente-1" data-unlock="2026-08-10" data-level-name="Nivel 2 Valiente I">
+              <img src="assets/level-valiente-1.png" alt="Imagen conceptual del nivel Valiente I" />
+              <div>
+                <span>Nivel 2 · 8-9 de agosto</span>
+                <h3>Valiente I</h3>
+                <p>Confronta tus miedos, reconoce tus emociones y convierte desafios en oportunidades de expansion.</p>
+                <small class="unlock-note">Se desbloquea el 10 de agosto.</small>
+              </div>
+              <label class="check-pill"><input type="checkbox" data-check="nivel2" /> Completo</label>
+            </article>
+            <article class="level-row" id="nivel-valiente-2" data-unlock="2026-08-31" data-level-name="Nivel 3 Valiente II">
+              <img src="assets/level-valiente-2.png" alt="Imagen conceptual del nivel Valiente II" />
+              <div>
+                <span>Nivel 3 · 29-30 de agosto</span>
+                <h3>Valiente II</h3>
+                <p>Libera culpa y resentimiento, reconcilia tu historia y escribe una version mas luminosa de ti.</p>
+                <small class="unlock-note">Se desbloquea el 31 de agosto.</small>
+              </div>
+              <label class="check-pill"><input type="checkbox" data-check="nivel3" /> Completo</label>
+            </article>
+            <article class="level-row" id="nivel-poderoso" data-unlock="2026-09-14" data-level-name="Nivel 4 Poderoso">
+              <img src="assets/level-poderoso.png" alt="Imagen conceptual del nivel Poderoso" />
+              <div>
+                <span>Nivel 4 · 12-13 de septiembre</span>
+                <h3>Poderoso</h3>
+                <p>Liderazgo personal, servicio colectivo e influencia desde autenticidad.</p>
+                <small class="unlock-note">Se desbloquea el 14 de septiembre.</small>
+              </div>
+              <label class="check-pill"><input type="checkbox" data-check="nivel4" /> Completo</label>
+            </article>
+            <article class="level-row" id="nivel-confianza" data-unlock="2026-09-25" data-level-name="Noche de confianza">
+              <img src="assets/level-confianza.png" alt="Imagen conceptual de la Noche de confianza" />
+              <div>
+                <span>Integracion · jueves 24 de septiembre · 5pm a 10pm</span>
+                <h3>Noche de confianza</h3>
+                <p>Reconocimiento interior, gratitud, vision y preparacion para el salto final.</p>
+                <small class="unlock-note">Se desbloquea el 25 de septiembre.</small>
+              </div>
+              <label class="check-pill"><input type="checkbox" data-check="confianza" /> Completo</label>
+            </article>
+            <article class="level-row" id="nivel-supervivencia" data-unlock="2026-10-19" data-level-name="Nivel 5 Supervivencia">
+              <img src="assets/level-supervivencia.png" alt="Imagen conceptual del nivel Supervivencia" />
+              <div>
+                <span>Nivel 5 · 17-18 de octubre</span>
+                <h3>Supervivencia</h3>
+                <p>Reto final fuera de la ciudad: naturaleza, resiliencia y sabiduria encarnada.</p>
+                <small class="unlock-note">Se desbloquea el 19 de octubre.</small>
+              </div>
+              <label class="check-pill"><input type="checkbox" data-check="nivel5" /> Completo</label>
+            </article>
+          </div>
+        </section>
+
+        <section class="portal-section" id="reflexion">
+          <div class="section-title">
+            <div>
+              <span class="eyebrow">Integracion posterior</span>
+              <h2>Que me llevo del fin de semana</h2>
+            </div>
+            <button type="button" id="saveReflection">Guardar reflexión</button>
+          </div>
+
+          <div class="reflection-layout">
+            <form class="reflection-form">
+              <label>
+                Nivel vivido
+                <select id="reflectionLevel">
+                  <option value="nivel1">Valioso</option>
+                  <option value="nivel2">Valiente I</option>
+                  <option value="nivel3">Valiente II</option>
+                  <option value="nivel4">Poderoso</option>
+                  <option value="confianza">Noche de confianza</option>
+                  <option value="nivel5">Supervivencia</option>
+                </select>
+              </label>
+              <label>
+                Que me llevo
+                <textarea id="takeaway" rows="4" placeholder="Me llevo de este fin de semana..."></textarea>
+              </label>
+              <label>
+                Momento mas importante
+                <textarea id="keyMoment" rows="4" placeholder="El momento que mas me marco fue..."></textarea>
+              </label>
+              <label>
+                Decision que nace de este nivel
+                <textarea id="decision" rows="4" placeholder="A partir de ahora decido..."></textarea>
+              </label>
+              <label>
+                Evidencia para staff
+                <textarea id="staffEvidence" rows="4" placeholder="La evidencia concreta que puedo mostrar es..."></textarea>
+              </label>
+            </form>
+
+            <aside class="reflection-summary">
+              <strong>Resumen para revisión</strong>
+              <p id="reflectionStatus">Sin reflexión guardada para este nivel.</p>
+              <small>El staff puede revisar y aprobar lo cargado desde el módulo admin.</small>
+            </aside>
+          </div>
+        </section>
+
+        <section class="portal-section" id="staff">
+          <div class="section-title">
+            <div>
+              <span class="eyebrow">Vista privada</span>
+              <h2>Staff admin</h2>
+            </div>
+            <button type="button" id="approveReflection">Aprobar reflexión actual</button>
+          </div>
+
+          <div class="admin-grid">
+            <article class="admin-panel participant-registration">
+              <strong>Registrar participante</strong>
+              <div class="form-row">
+                <label>
+                  Nombres
+                  <input id="participantFirstName" placeholder="Nombres del participante" />
+                </label>
+                <label>
+                  Apellidos
+                  <input id="participantLastName" placeholder="Apellidos del participante" />
+                </label>
+              </div>
+              <div class="form-row">
+                <label>
+                  WhatsApp
+                  <input id="participantWhatsapp" placeholder="+57 300 000 0000" />
+                </label>
+                <label>
+                  Correo
+                  <input id="participantEmail" type="email" placeholder="correo@ejemplo.com" />
+                </label>
+              </div>
+              <div class="form-row">
+                <label>
+                  Cohorte
+                  <input id="participantCohort" value="Julio - Octubre 2026" />
+                </label>
+                <label>
+                  Código inicial
+                  <input id="activationCode" value="VALIOSO-4821" />
+                </label>
+              </div>
+              <div class="form-row">
+                <label>
+                  Contacto emergencia - nombres
+                  <input id="emergencyFirstName" placeholder="Nombres" />
+                </label>
+                <label>
+                  Contacto emergencia - apellidos
+                  <input id="emergencyLastName" placeholder="Apellidos" />
+                </label>
+              </div>
+              <label>
+                Número del contacto de emergencia
+                <input id="emergencyPhone" placeholder="+57 300 000 0000" />
+              </label>
+              <button type="button" class="quiet-button" id="saveParticipant">Guardar participante</button>
+            </article>
+
+            <article class="admin-panel">
+              <strong>Cargar material del nivel</strong>
+              <label>
+                Nivel
+                <select id="adminLevel">
+                  <option value="nivel1">Valioso</option>
+                  <option value="nivel2">Valiente I</option>
+                  <option value="nivel3">Valiente II</option>
+                  <option value="nivel4">Poderoso</option>
+                  <option value="confianza">Noche de confianza</option>
+                  <option value="nivel5">Supervivencia</option>
+                </select>
+              </label>
+              <label>
+                Nombre del recurso
+                <input id="resourceTitle" placeholder="Ej: Guia de integración Valiente I" />
+              </label>
+              <label>
+                Enlace o instrucción
+                <textarea id="resourceLink" rows="3" placeholder="URL, consigna o nota interna para participantes"></textarea>
+              </label>
+              <button type="button" class="quiet-button" id="saveResource">Cargar recurso</button>
+            </article>
+
+            <article class="admin-panel">
+              <strong>Revisión de participantes</strong>
+              <div class="approval-list" id="approvalList">
+                <p>No hay reflexiones enviadas todavía.</p>
+              </div>
+            </article>
+
+            <article class="admin-panel">
+              <strong>Participantes registrados</strong>
+              <div class="approval-list" id="participantList">
+                <p>No hay participantes registrados.</p>
+              </div>
+            </article>
+
+            <article class="admin-panel">
+              <strong>Recursos cargados</strong>
+              <div class="approval-list" id="resourceList">
+                <p>No hay recursos cargados.</p>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="portal-section" id="acompanamiento">
+          <div class="section-title">
+            <div>
+              <span class="eyebrow">Red de apoyo</span>
+              <h2>Acompañamiento</h2>
+            </div>
+          </div>
+
+          <div class="support-grid">
+            <article>
+              <strong>Coaching individual</strong>
+              <p>Agenda, prepara preguntas y registra acuerdos de cada sesion.</p>
+              <button type="button" class="quiet-button">Registrar sesion</button>
+            </article>
+            <article>
+              <strong>Acompañamiento psicologico</strong>
+              <p>Seguimiento emocional, alertas de cuidado y avances conversados.</p>
+              <button type="button" class="quiet-button">Anotar seguimiento</button>
+            </article>
+            <article>
+              <strong>Buddy de responsabilidad</strong>
+              <p>Check-in semanal con un compañero para sostener compromisos.</p>
+              <button type="button" class="quiet-button">Crear check-in</button>
+            </article>
+          </div>
+        </section>
+
+        <section class="portal-section" id="recursos">
+          <div class="section-title">
+            <div>
+              <span class="eyebrow">Herramientas</span>
+              <h2>Recursos recomendados</h2>
+            </div>
+          </div>
+
+          <div class="resource-grid">
+            <article><strong>Diagnostico inicial y final</strong><p>Comparativo 1-10 para medir transformacion real.</p></article>
+            <article><strong>Feedback 360</strong><p>Validacion de cambios observables por 3 personas cercanas.</p></article>
+            <article><strong>Biblioteca de practicas</strong><p>Audios, ejercicios, meditaciones y retos por nivel.</p></article>
+            <article><strong>Proyecto de impacto</strong><p>Una accion de servicio que demuestre liderazgo en el entorno.</p></article>
+          </div>
+
+          <div class="palette-guide" aria-label="Paleta visual del portal">
+            <span class="swatch swatch-blue">Confianza</span>
+            <span class="swatch swatch-gold">Acción</span>
+            <span class="swatch swatch-cyan">Claridad</span>
+            <span class="swatch swatch-green">Crecimiento</span>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>

@@ -1,0 +1,879 @@
+:root {
+  --navy: #071a3e;
+  --navy-2: #0d2c68;
+  --blue: #1769d2;
+  --sky: #38b8d8;
+  --ink: #111827;
+  --muted: #627086;
+  --line: #dce5ef;
+  --paper: #f4f8fc;
+  --white: #ffffff;
+  --gold: #ffc947;
+  --green: #5c9956;
+  --cyan: #38b8d8;
+  --orange: #f5a33b;
+  --red: #d95f5f;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  color: var(--ink);
+  background:
+    radial-gradient(circle at top right, rgba(255, 201, 71, 0.2), transparent 28rem),
+    radial-gradient(circle at top left, rgba(56, 184, 216, 0.15), transparent 30rem),
+    var(--paper);
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+.portal-shell {
+  display: grid;
+  grid-template-columns: 276px minmax(0, 1fr);
+  min-height: 100vh;
+}
+
+.sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  color: var(--white);
+  background:
+    linear-gradient(180deg, rgba(7, 26, 62, 0.94), rgba(13, 44, 104, 0.96)),
+    url("assets/level-valioso.png") center / cover;
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.brand-mark {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  background: linear-gradient(135deg, var(--gold), #ffe08a);
+  color: var(--navy);
+  font-weight: 950;
+}
+
+.brand strong,
+.brand small {
+  display: block;
+}
+
+.brand small {
+  margin-top: 2px;
+  color: rgba(255, 255, 255, 0.68);
+}
+
+.side-nav {
+  display: grid;
+  gap: 6px;
+}
+
+.side-nav a {
+  border-radius: 8px;
+  padding: 12px 13px;
+  color: rgba(255, 255, 255, 0.76);
+  font-weight: 800;
+}
+
+.side-nav a:hover,
+.side-nav a.active {
+  background: rgba(255, 201, 71, 0.18);
+  color: var(--white);
+}
+
+.sidebar-progress {
+  margin-top: auto;
+  padding: 16px;
+  border: 1px solid rgba(245, 155, 56, 0.28);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-progress span {
+  display: block;
+  font-size: 3rem;
+  line-height: 1;
+  font-weight: 950;
+}
+
+.sidebar-progress small,
+.eyebrow,
+.card-label,
+.level-row span {
+  color: var(--cyan);
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  font-weight: 950;
+  letter-spacing: 0.09em;
+}
+
+.progress-track {
+  height: 8px;
+  overflow: hidden;
+  border-radius: 999px;
+  margin-top: 14px;
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.progress-track i {
+  display: block;
+  width: 0%;
+  height: 100%;
+  background: linear-gradient(90deg, var(--green), var(--cyan), var(--orange));
+  transition: width 180ms ease;
+}
+
+.portal-main {
+  padding: 28px;
+}
+
+.workspace-header {
+  min-height: 260px;
+  border-radius: 8px;
+  color: var(--white);
+  background:
+    linear-gradient(90deg, rgba(7, 26, 62, 0.95), rgba(23, 105, 210, 0.58)),
+    url("assets/level-poderoso.png") center right / cover;
+  padding: 30px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 280px;
+  gap: 28px;
+  align-items: end;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin-top: 0;
+}
+
+h1 {
+  max-width: 720px;
+  margin-bottom: 12px;
+  font-size: clamp(2rem, 4vw, 4.6rem);
+  line-height: 0.95;
+  letter-spacing: 0;
+}
+
+.workspace-header p {
+  max-width: 650px;
+  color: rgba(255, 255, 255, 0.82);
+  line-height: 1.55;
+}
+
+.profile-card {
+  display: grid;
+  grid-template-columns: 72px 1fr;
+  gap: 12px;
+  align-items: center;
+  border-radius: 8px;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(12px);
+}
+
+.profile-card img {
+  width: 72px;
+  height: 72px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.profile-card strong,
+.profile-card small {
+  display: block;
+}
+
+.profile-card small {
+  margin-top: 4px;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.today-grid {
+  display: grid;
+  grid-template-columns: 1.7fr repeat(3, 1fr);
+  gap: 14px;
+  margin: 18px 0;
+}
+
+.today-card,
+.metric-card,
+.work-panel,
+.letter-form,
+.level-row,
+.reflection-form,
+.reflection-summary,
+.admin-panel,
+.support-grid article,
+.resource-grid article {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--white);
+}
+
+.today-card {
+  padding: 18px;
+}
+
+.primary-card {
+  color: var(--white);
+  background: linear-gradient(135deg, var(--navy), var(--blue));
+  border-color: transparent;
+}
+
+.today-card h2 {
+  color: inherit;
+  margin-bottom: 8px;
+  font-size: 1.45rem;
+}
+
+.today-card strong {
+  display: block;
+  margin: 8px 0;
+  color: var(--navy);
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.primary-card .card-label,
+.primary-card p {
+  color: rgba(255, 255, 255, 0.76);
+}
+
+.today-card p,
+.metric-card p,
+.level-row p,
+.support-grid p,
+.resource-grid p {
+  color: var(--muted);
+  line-height: 1.5;
+  margin-bottom: 0;
+}
+
+.action-link {
+  display: inline-block;
+  margin-top: 18px;
+  color: var(--orange);
+  font-weight: 900;
+}
+
+.level-message {
+  border-radius: 8px;
+  color: var(--white);
+  background:
+    linear-gradient(90deg, rgba(7, 26, 62, 0.94), rgba(23, 105, 210, 0.68)),
+    url("assets/level-valioso.png") center / cover;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 180px;
+  align-items: end;
+  gap: 22px;
+  margin: 18px 0;
+  padding: 24px;
+}
+
+.level-message[hidden] {
+  display: none;
+}
+
+.level-message h2 {
+  color: var(--white);
+  margin: 8px 0 12px;
+}
+
+.level-message p {
+  max-width: 860px;
+  color: rgba(255, 255, 255, 0.84);
+  line-height: 1.55;
+}
+
+.message-actions {
+  border-radius: 8px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.message-actions strong {
+  display: block;
+  color: var(--orange);
+  font-size: 2.1rem;
+  line-height: 1;
+}
+
+.portal-section {
+  scroll-margin-top: 24px;
+  margin-top: 18px;
+}
+
+.section-title {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 12px;
+}
+
+h2 {
+  color: var(--navy);
+  margin-bottom: 0;
+  font-size: clamp(1.55rem, 3vw, 2.6rem);
+  line-height: 1;
+}
+
+.section-actions {
+  display: flex;
+  gap: 10px;
+}
+
+button {
+  min-height: 42px;
+  border: 0;
+  border-radius: 8px;
+  padding: 10px 14px;
+  color: var(--navy);
+  background: linear-gradient(135deg, var(--gold), #ffe08a);
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.quiet-button {
+  color: var(--navy);
+  background: #efe8f8;
+}
+
+.work-panel {
+  display: grid;
+  grid-template-columns: 0.8fr repeat(3, 1fr);
+  gap: 12px;
+  padding: 16px;
+}
+
+label {
+  display: grid;
+  gap: 8px;
+  color: var(--navy);
+  font-weight: 850;
+}
+
+input,
+textarea,
+select {
+  width: 100%;
+  min-height: 44px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fffafd;
+  color: var(--ink);
+  padding: 11px 12px;
+}
+
+textarea {
+  resize: vertical;
+}
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.metric-card {
+  padding: 18px;
+}
+
+.metric-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  font-weight: 900;
+  color: var(--navy);
+}
+
+.metric-title strong {
+  color: var(--blue);
+  font-size: 1.6rem;
+}
+
+input[type="range"] {
+  width: 100%;
+  margin: 18px 0 10px;
+  accent-color: var(--blue);
+}
+
+.letter-form {
+  padding: 18px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.goal-table {
+  display: grid;
+  grid-template-columns: 1fr 0.7fr 0.7fr 1.5fr;
+  gap: 8px;
+  margin: 14px 0;
+}
+
+.table-head {
+  color: var(--navy);
+  font-size: 0.74rem;
+  font-weight: 950;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.levels-list {
+  display: grid;
+  gap: 10px;
+}
+
+.schedule-strip {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.schedule-strip span {
+  min-height: 42px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--white);
+  color: var(--navy);
+  display: grid;
+  place-items: center;
+  padding: 8px;
+  font-size: 0.82rem;
+  font-weight: 900;
+  text-align: center;
+}
+
+.level-tabs {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  margin-bottom: 12px;
+  padding-bottom: 2px;
+}
+
+.level-tabs a {
+  flex: 0 0 auto;
+  min-height: 38px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--white);
+  color: var(--navy);
+  display: grid;
+  place-items: center;
+  padding: 8px 14px;
+  font-size: 0.88rem;
+  font-weight: 900;
+}
+
+.level-tabs a:hover {
+  border-color: var(--cyan);
+  color: var(--blue);
+}
+
+.level-row {
+  scroll-margin-top: 18px;
+  display: grid;
+  grid-template-columns: 112px minmax(0, 1fr) 150px;
+  gap: 16px;
+  align-items: center;
+  padding: 12px;
+  position: relative;
+  overflow: hidden;
+}
+
+.level-row img {
+  width: 112px;
+  height: 82px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.level-row h3 {
+  color: var(--navy);
+  margin-bottom: 4px;
+  font-size: 1.2rem;
+}
+
+.unlock-note {
+  display: inline-block;
+  margin-top: 8px;
+  color: var(--muted);
+  font-weight: 800;
+}
+
+.level-row.is-locked {
+  background: #f8fafc;
+}
+
+.level-row.is-locked img {
+  filter: grayscale(1);
+  opacity: 0.58;
+}
+
+.level-row.is-locked::after {
+  content: "Bloqueado";
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  border-radius: 999px;
+  padding: 6px 10px;
+  color: #7a3a00;
+  background: #ffe8c7;
+  font-size: 0.72rem;
+  font-weight: 950;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.level-row.is-unlocked::after {
+  content: "Disponible";
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  border-radius: 999px;
+  padding: 6px 10px;
+  color: #315f26;
+  background: #e5f3dc;
+  font-size: 0.72rem;
+  font-weight: 950;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.check-pill {
+  display: inline-flex;
+  grid-auto-flow: column;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 40px;
+  border-radius: 999px;
+  background: #e5f3dc;
+  color: #315f26;
+  font-size: 0.9rem;
+}
+
+.level-row.is-locked .check-pill {
+  color: #6f7785;
+  background: #edf1f5;
+}
+
+.level-row.is-locked .check-pill input {
+  cursor: not-allowed;
+}
+
+input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--green);
+}
+
+.support-grid,
+.resource-grid,
+.admin-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.reflection-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 14px;
+}
+
+.reflection-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  padding: 18px;
+}
+
+.reflection-form label:first-child {
+  grid-column: 1 / -1;
+}
+
+.reflection-summary {
+  padding: 18px;
+  color: var(--navy);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0.9)),
+    url("assets/level-confianza.png") center / cover;
+}
+
+.reflection-summary strong,
+.admin-panel strong {
+  display: block;
+  color: var(--navy);
+  font-size: 1.15rem;
+  margin-bottom: 12px;
+}
+
+.reflection-summary p {
+  color: var(--ink);
+  line-height: 1.5;
+}
+
+.reflection-summary small {
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.admin-panel {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+  padding: 18px;
+}
+
+.participant-registration {
+  grid-column: span 2;
+}
+
+.approval-list {
+  display: grid;
+  gap: 10px;
+}
+
+.approval-item {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 12px;
+  background: #fbfdff;
+}
+
+.approval-item span {
+  display: block;
+  color: var(--blue);
+  font-size: 0.78rem;
+  font-weight: 950;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.approval-item p {
+  margin: 6px 0 0;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.resource-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.palette-guide {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.swatch {
+  min-height: 54px;
+  border-radius: 8px;
+  color: var(--white);
+  display: grid;
+  place-items: center;
+  padding: 10px;
+  font-weight: 950;
+  text-align: center;
+}
+
+.swatch-blue {
+  background: var(--blue);
+}
+
+.swatch-gold {
+  background: var(--gold);
+  color: var(--navy);
+}
+
+.swatch-green {
+  background: var(--green);
+}
+
+.swatch-cyan {
+  background: var(--cyan);
+  color: #102336;
+}
+
+.support-grid article,
+.resource-grid article {
+  padding: 18px;
+}
+
+.support-grid strong,
+.resource-grid strong {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--navy);
+  font-size: 1.1rem;
+}
+
+.support-grid button {
+  margin-top: 16px;
+}
+
+@media (max-width: 1100px) {
+  .portal-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    position: static;
+    height: auto;
+  }
+
+  .side-nav {
+    display: flex;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+
+  .side-nav a {
+    white-space: nowrap;
+  }
+
+  .sidebar-progress {
+    margin-top: 0;
+  }
+
+  .workspace-header,
+  .today-grid,
+  .level-message,
+  .work-panel,
+  .metrics-grid,
+  .schedule-strip,
+  .reflection-layout,
+  .reflection-form,
+  .admin-grid,
+  .support-grid,
+  .resource-grid,
+  .palette-guide {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .participant-registration {
+    grid-column: span 2;
+  }
+}
+
+@media (max-width: 760px) {
+  .portal-main,
+  .sidebar {
+    padding: 16px;
+  }
+
+  .workspace-header,
+  .today-grid,
+  .level-message,
+  .work-panel,
+  .metrics-grid,
+  .form-row,
+  .schedule-strip,
+  .reflection-layout,
+  .reflection-form,
+  .admin-grid,
+  .support-grid,
+  .resource-grid,
+  .palette-guide {
+    grid-template-columns: 1fr;
+  }
+
+  .participant-registration {
+    grid-column: auto;
+  }
+
+  .section-title {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .level-row {
+    grid-template-columns: 82px minmax(0, 1fr);
+  }
+
+  .level-row img {
+    width: 82px;
+    height: 82px;
+  }
+
+  .check-pill {
+    grid-column: 1 / -1;
+    justify-self: start;
+    padding: 0 14px;
+  }
+
+  .goal-table {
+    grid-template-columns: 1fr;
+  }
+
+  .table-head {
+    display: none;
+  }
+}
+
+@media print {
+  .sidebar,
+  .workspace-header,
+  .today-grid,
+  #semana,
+  #indicadores,
+  #niveles,
+  #acompanamiento,
+  #recursos {
+    display: none;
+  }
+
+  .portal-shell {
+    display: block;
+  }
+
+  .portal-main {
+    padding: 0;
+  }
+}
