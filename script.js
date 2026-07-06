@@ -1,62 +1,86 @@
-const storageKey = "liderazgoPortalState";
-
-const defaultState = {
-  metrics: {},
-  checks: {},
-  letter: {},
-  evidence: {},
-  reflections: {},
-  approvals: {},
-  resources: [],
-  participants: []
-};
-
-const state = loadState();
-
 const levelSchedule = [
   { key: "nivel1", name: "Nivel 1 Valioso", unlock: "2026-07-06T00:00:00-05:00", label: "6 Jul" },
   { key: "nivel2", name: "Nivel 2 Valiente I", unlock: "2026-08-10T00:00:00-05:00", label: "10 Ago" },
   { key: "nivel3", name: "Nivel 3 Valiente II", unlock: "2026-08-31T00:00:00-05:00", label: "31 Ago" },
   { key: "nivel4", name: "Nivel 4 Poderoso", unlock: "2026-09-14T00:00:00-05:00", label: "14 Sep" },
   { key: "confianza", name: "Noche de confianza", unlock: "2026-09-25T00:00:00-05:00", label: "25 Sep" },
-  { key: "nivel5", name: "Nivel 5 Supervivencia", unlock: "2026-10-19T00:00:00-05:00", label: "19 Oct" }
+  { key: "nivel5", name: "Nivel 5 Supervivencia", unlock: "2026-10-19T00:00:00-05:00", label: "19 Oct" },
 ];
 
-function loadState() {
-  try {
-    const saved = JSON.parse(localStorage.getItem(storageKey) || "{}");
-    return {
-      ...defaultState,
-      ...saved,
-      metrics: saved.metrics || {},
-      checks: saved.checks || {},
-      letter: saved.letter || {},
-      evidence: saved.evidence || {},
-      reflections: saved.reflections || {},
-      approvals: saved.approvals || {},
-      resources: saved.resources || [],
-      participants: saved.participants || []
-    };
-  } catch {
-    return { ...defaultState };
-  }
+let state = {
+  metrics: {},
+  checks: {},
+  letter: {},
+  evidence: {},
+  reflections: {},
+  approvals: {},
+};
+
+async function initPortal() {
+  await loadStateFromSupabase();
+  hydrateMetrics();
+  hydrateChecks();
+  applyLevelUnlocks();
+  applyMilestoneMessages();
+  hydrateLetter();
+  hydrateEvidence();
+  hydrateReflection();
+  hydrateAdmin();
+  document.querySelector("#achievementForm").addEventListener("input", updateLetterSummary);
+  updateOverall();
+  await initTickets();
 }
 
-function saveState() {
-  localStorage.setItem(storageKey, JSON.stringify(state));
+async function loadStateFromSupabase() {
+  const userId = currentUser.id;
+
+  const [metricsRes, checksRes, letterRes, evidenceRes, reflectionsRes] = await Promise.all([
+    sb.from("metrics").select("metric_key, value").eq("user_id", userId),
+    sb.from("level_checks").select("level_key, completed").eq("user_id", userId),
+    sb.from("letters").select("data").eq("user_id", userId).maybeSingle(),
+    sb.from("evidence").select("week, weekly_win, weekly_learning, weekly_challenge").eq("user_id", userId),
+    sb.from("reflections").select("level_key, takeaway, key_moment, decision, staff_evidence, approval_status").eq("user_id", userId),
+  ]);
+
+  state.metrics = {};
+  (metricsRes.data || []).forEach((m) => { state.metrics[m.metric_key] = m.value; });
+
+  state.checks = {};
+  (checksRes.data || []).forEach((c) => { state.checks[c.level_key] = c.completed; });
+
+  state.letter = letterRes.data?.data || {};
+
+  state.evidence = {};
+  (evidenceRes.data || []).forEach((e) => {
+    state.evidence[e.week] = {
+      weeklyWin: e.weekly_win || "",
+      weeklyLearning: e.weekly_learning || "",
+      weeklyChallenge: e.weekly_challenge || "",
+    };
+  });
+
+  state.reflections = {};
+  state.approvals = {};
+  (reflectionsRes.data || []).forEach((r) => {
+    state.reflections[r.level_key] = {
+      takeaway: r.takeaway || "",
+      keyMoment: r.key_moment || "",
+      decision: r.decision || "",
+      staffEvidence: r.staff_evidence || "",
+    };
+    state.approvals[r.level_key] = r.approval_status || "pendiente";
+  });
 }
 
 function updateOverall() {
   const ranges = [...document.querySelectorAll(".metric-card input[type='range']")];
   const metricAverage = ranges.reduce((sum, range) => sum + Number(range.value), 0) / ranges.length;
   const checks = [...document.querySelectorAll("[data-check]")];
-  const checkAverage = checks.filter((check) => check.checked).length / checks.length * 100;
+  const checkAverage = (checks.filter((c) => c.checked).length / checks.length) * 100;
   const overall = Math.round(metricAverage * 0.7 + checkAverage * 0.3);
   document.querySelector("#overallScore").textContent = `${overall}%`;
   document.querySelector("#overallBar").style.width = `${overall}%`;
-  document.querySelector("#completedLevels").textContent = `${checks.filter((check) => check.checked).length}/${checks.length}`;
-  const evidenceCount = document.querySelector("#evidenceCount");
-  if (evidenceCount) evidenceCount.textContent = Object.keys(state.evidence).length;
+  document.querySelector("#completedLevels").textContent = `${checks.filter((c) => c.checked).length}/${checks.length}`;
 }
 
 function hydrateMetrics() {
@@ -69,9 +93,17 @@ function hydrateMetrics() {
 
     range.addEventListener("input", () => {
       value.textContent = `${range.value}%`;
-      state.metrics[key] = range.value;
-      saveState();
+      state.metrics[key] = Number(range.value);
       updateOverall();
+    });
+
+    range.addEventListener("change", () => {
+      sb.from("metrics").upsert({
+        user_id: currentUser.id,
+        metric_key: key,
+        value: Number(range.value),
+        updated_at: new Date().toISOString(),
+      }, { onConflict: "user_id,metric_key" });
     });
   });
 }
@@ -80,10 +112,15 @@ function hydrateChecks() {
   document.querySelectorAll("[data-check]").forEach((check) => {
     const key = check.dataset.check;
     check.checked = Boolean(state.checks[key]);
+
     check.addEventListener("change", () => {
       state.checks[key] = check.checked;
-      saveState();
       updateOverall();
+      sb.from("level_checks").upsert({
+        user_id: currentUser.id,
+        level_key: key,
+        completed: check.checked,
+      }, { onConflict: "user_id,level_key" });
     });
   });
 }
@@ -117,8 +154,6 @@ function applyLevelUnlocks() {
     nextDate.textContent = "Todo";
     nextLabel.textContent = "Todos los niveles estan disponibles";
   }
-
-  saveState();
 }
 
 function applyMilestoneMessages() {
@@ -134,15 +169,20 @@ function hydrateLetter() {
     field.value = state.letter[field.name] ?? field.value;
     field.addEventListener("input", () => {
       state.letter[field.name] = field.value;
-      saveState();
     });
   });
 
-  document.querySelector("#saveLetter").addEventListener("click", () => {
+  document.querySelector("#saveLetter").addEventListener("click", async () => {
     [...form.elements].forEach((field) => {
       if (field.name) state.letter[field.name] = field.value;
     });
-    saveState();
+
+    await sb.from("letters").upsert({
+      user_id: currentUser.id,
+      data: state.letter,
+      updated_at: new Date().toISOString(),
+    }, { onConflict: "user_id" });
+
     flashButton("#saveLetter", "Carta guardada");
   });
 
@@ -164,12 +204,21 @@ function hydrateEvidence() {
 
   week.addEventListener("change", renderWeek);
 
-  document.querySelector("#saveEvidence").addEventListener("click", () => {
+  document.querySelector("#saveEvidence").addEventListener("click", async () => {
     state.evidence[week.value] = {};
     fields.forEach((field) => {
       state.evidence[week.value][field.id] = field.value;
     });
-    saveState();
+
+    await sb.from("evidence").upsert({
+      user_id: currentUser.id,
+      week: week.value,
+      weekly_win: fields[0].value,
+      weekly_learning: fields[1].value,
+      weekly_challenge: fields[2].value,
+      updated_at: new Date().toISOString(),
+    }, { onConflict: "user_id,week" });
+
     updateOverall();
     flashButton("#saveEvidence", "Evidencia guardada");
   });
@@ -191,21 +240,37 @@ function hydrateReflection() {
 
   level.addEventListener("change", renderReflection);
 
-  document.querySelector("#saveReflection").addEventListener("click", () => {
+  document.querySelector("#saveReflection").addEventListener("click", async () => {
     state.reflections[level.value] = {};
     fields.forEach((field) => {
       state.reflections[level.value][field.id] = field.value;
     });
     state.approvals[level.value] = state.approvals[level.value] || "pendiente";
-    saveState();
+
+    await sb.from("reflections").upsert({
+      user_id: currentUser.id,
+      level_key: level.value,
+      takeaway: fields[0].value,
+      key_moment: fields[1].value,
+      decision: fields[2].value,
+      staff_evidence: fields[3].value,
+      approval_status: state.approvals[level.value],
+      updated_at: new Date().toISOString(),
+    }, { onConflict: "user_id,level_key" });
+
     updateReflectionStatus();
     renderAdminLists();
     flashButton("#saveReflection", "Reflexión guardada");
   });
 
-  document.querySelector("#approveReflection").addEventListener("click", () => {
+  document.querySelector("#approveReflection").addEventListener("click", async () => {
     state.approvals[level.value] = "aprobada";
-    saveState();
+
+    await sb.from("reflections").update({
+      approval_status: "aprobada",
+      approved_by: currentUser.id,
+    }).eq("user_id", currentUser.id).eq("level_key", level.value);
+
     updateReflectionStatus();
     renderAdminLists();
     flashButton("#approveReflection", "Aprobada");
@@ -230,50 +295,62 @@ function updateReflectionStatus() {
 }
 
 function hydrateAdmin() {
-  document.querySelector("#saveParticipant").addEventListener("click", () => {
-    const participant = {
-      firstName: document.querySelector("#participantFirstName").value.trim(),
-      lastName: document.querySelector("#participantLastName").value.trim(),
-      whatsapp: document.querySelector("#participantWhatsapp").value.trim(),
-      email: document.querySelector("#participantEmail").value.trim(),
-      cohort: document.querySelector("#participantCohort").value.trim(),
-      activationCode: document.querySelector("#activationCode").value.trim(),
-      emergencyFirstName: document.querySelector("#emergencyFirstName").value.trim(),
-      emergencyLastName: document.querySelector("#emergencyLastName").value.trim(),
-      emergencyPhone: document.querySelector("#emergencyPhone").value.trim()
-    };
+  document.querySelector("#saveParticipant").addEventListener("click", async () => {
+    const firstName = document.querySelector("#participantFirstName").value.trim();
+    const lastName = document.querySelector("#participantLastName").value.trim();
+    const whatsapp = document.querySelector("#participantWhatsapp").value.trim();
+    const email = document.querySelector("#participantEmail").value.trim();
+    const cohort = document.querySelector("#participantCohort").value.trim();
+    const code = document.querySelector("#activationCode").value.trim();
+    const emergencyFirstName = document.querySelector("#emergencyFirstName").value.trim();
+    const emergencyLastName = document.querySelector("#emergencyLastName").value.trim();
+    const emergencyPhone = document.querySelector("#emergencyPhone").value.trim();
 
-    if (!participant.firstName && !participant.whatsapp) return;
+    if (!firstName && !whatsapp) return;
 
-    state.participants.push(participant);
-    [
-      "participantFirstName",
-      "participantLastName",
-      "participantWhatsapp",
-      "participantEmail",
-      "emergencyFirstName",
-      "emergencyLastName",
-      "emergencyPhone"
-    ].forEach((id) => {
+    const { error } = await sb.rpc("preregister_participant", {
+      p_first_name: firstName,
+      p_last_name: lastName,
+      p_whatsapp: whatsapp,
+      p_email: email,
+      p_cohort: cohort,
+      p_code: code,
+      p_staff_id: currentProfile.id,
+      p_emergency_first_name: emergencyFirstName,
+      p_emergency_last_name: emergencyLastName,
+      p_emergency_phone: emergencyPhone,
+    });
+
+    if (error) {
+      flashButton("#saveParticipant", "Error al guardar");
+      return;
+    }
+
+    ["participantFirstName", "participantLastName", "participantWhatsapp", "participantEmail",
+     "emergencyFirstName", "emergencyLastName", "emergencyPhone"].forEach((id) => {
       document.querySelector(`#${id}`).value = "";
     });
     document.querySelector("#activationCode").value = generateActivationCode();
-    saveState();
     renderAdminLists();
     flashButton("#saveParticipant", "Participante guardado");
   });
 
-  document.querySelector("#saveResource").addEventListener("click", () => {
-    const level = document.querySelector("#adminLevel").value;
+  document.querySelector("#saveResource").addEventListener("click", async () => {
+    const levelKey = document.querySelector("#adminLevel").value;
     const title = document.querySelector("#resourceTitle").value.trim();
     const link = document.querySelector("#resourceLink").value.trim();
 
     if (!title && !link) return;
 
-    state.resources.push({ level, title: title || "Recurso sin titulo", link });
+    await sb.from("resources").insert({
+      level_key: levelKey,
+      title: title || "Recurso sin titulo",
+      link,
+      created_by: currentProfile.id,
+    });
+
     document.querySelector("#resourceTitle").value = "";
     document.querySelector("#resourceLink").value = "";
-    saveState();
     renderAdminLists();
     flashButton("#saveResource", "Recurso cargado");
   });
@@ -281,32 +358,62 @@ function hydrateAdmin() {
   renderAdminLists();
 }
 
-function renderAdminLists() {
+async function renderAdminLists() {
+  if (currentProfile.role === "participant") return;
+
   const approvals = document.querySelector("#approvalList");
   const participants = document.querySelector("#participantList");
   const resources = document.querySelector("#resourceList");
-  const reflectionEntries = Object.entries(state.reflections).filter(([, value]) => Object.values(value).some(Boolean));
 
-  approvals.innerHTML = reflectionEntries.length
-    ? reflectionEntries.map(([key, value]) => {
-        const label = levelSchedule.find((item) => item.key === key)?.name || key;
-        const status = state.approvals[key] === "aprobada" ? "Aprobada" : "Pendiente";
-        return `<div class="approval-item"><span>${escapeHtml(label)} · ${status}</span><p>${escapeHtml(value.takeaway || "Sin respuesta en que me llevo.")}</p></div>`;
+  let reflQuery = sb.from("reflections").select("*, profiles!inner(first_name, last_name)");
+  let pendingQuery = sb.from("pending_participants").select("*");
+  let activeQuery = sb.from("profiles").select("*").eq("role", "participant");
+  const resQuery = sb.from("resources").select("*").order("created_at", { ascending: false });
+
+  if (currentProfile.role === "staff") {
+    pendingQuery = pendingQuery.eq("staff_id", currentProfile.id);
+    activeQuery = activeQuery.eq("staff_id", currentProfile.id);
+  }
+
+  const [reflRes, pendingRes, activeRes, resRes] = await Promise.all([
+    reflQuery,
+    pendingQuery.order("created_at", { ascending: false }),
+    activeQuery.order("created_at", { ascending: false }),
+    resQuery,
+  ]);
+
+  const partData = [
+    ...(pendingRes.data || []).map((p) => ({ ...p, _pending: true })),
+    ...(activeRes.data || []).map((p) => ({ ...p, _pending: false })),
+  ];
+
+  const reflections = (reflRes.data || []).filter((r) =>
+    r.takeaway || r.key_moment || r.decision || r.staff_evidence
+  );
+
+  approvals.innerHTML = reflections.length
+    ? reflections.map((r) => {
+        const name = `${r.profiles?.first_name || ""} ${r.profiles?.last_name || ""}`.trim() || "Participante";
+        const label = levelSchedule.find((l) => l.key === r.level_key)?.name || r.level_key;
+        const status = r.approval_status === "aprobada" ? "Aprobada" : "Pendiente";
+        return `<div class="approval-item"><span>${escapeHtml(name)} · ${escapeHtml(label)} · ${status}</span><p>${escapeHtml(r.takeaway || "Sin respuesta.")}</p></div>`;
       }).join("")
     : "<p>No hay reflexiones enviadas todavía.</p>";
 
-  participants.innerHTML = state.participants.length
-    ? state.participants.map((item) => {
-        const name = `${item.firstName || ""} ${item.lastName || ""}`.trim() || "Participante sin nombre";
-        const emergencyName = `${item.emergencyFirstName || ""} ${item.emergencyLastName || ""}`.trim() || "Sin nombre de emergencia";
-        return `<div class="approval-item"><span>${escapeHtml(name)} · ${escapeHtml(item.activationCode || "Sin código")}</span><p>WhatsApp: ${escapeHtml(item.whatsapp || "Sin WhatsApp")}<br>Emergencia: ${escapeHtml(emergencyName)} · ${escapeHtml(item.emergencyPhone || "Sin número")}</p></div>`;
+  participants.innerHTML = partData.length
+    ? partData.map((p) => {
+        const name = `${p.first_name || ""} ${p.last_name || ""}`.trim() || "Sin nombre";
+        const emergencyName = `${p.emergency_first_name || ""} ${p.emergency_last_name || ""}`.trim() || "Sin contacto";
+        const statusLabel = p._pending ? `Código: ${p.activation_code || "—"}` : "Activado";
+        return `<div class="approval-item"><span>${escapeHtml(name)} · ${statusLabel}</span><p>WhatsApp: ${escapeHtml(p.whatsapp || "—")}<br>Emergencia: ${escapeHtml(emergencyName)} · ${escapeHtml(p.emergency_phone || "—")}</p></div>`;
       }).join("")
     : "<p>No hay participantes registrados.</p>";
 
-  resources.innerHTML = state.resources.length
-    ? state.resources.map((item) => {
-        const label = levelSchedule.find((level) => level.key === item.level)?.name || item.level;
-        return `<div class="approval-item"><span>${escapeHtml(label)}</span><p><strong>${escapeHtml(item.title)}</strong><br>${escapeHtml(item.link || "Sin enlace adicional.")}</p></div>`;
+  const resData = resRes.data || [];
+  resources.innerHTML = resData.length
+    ? resData.map((r) => {
+        const label = levelSchedule.find((l) => l.key === r.level_key)?.name || r.level_key;
+        return `<div class="approval-item"><span>${escapeHtml(label)}</span><p><strong>${escapeHtml(r.title)}</strong><br>${escapeHtml(r.link || "Sin enlace.")}</p></div>`;
       }).join("")
     : "<p>No hay recursos cargados.</p>";
 }
@@ -329,7 +436,10 @@ function updateLetterSummary() {
   const declaration = state.letter.declaration?.trim();
   const hasMetric = Boolean(state.letter.today1 || state.letter.target1 || state.letter.proof1);
 
-  document.querySelector("#participantName").textContent = name || "Participante";
+  if (currentProfile) {
+    document.querySelector("#participantName").textContent =
+      `${currentProfile.first_name || ""} ${currentProfile.last_name || ""}`.trim() || name || "Participante";
+  }
   document.querySelector("#letterStatus").textContent = declaration && hasMetric ? "Activa" : "Pendiente";
 }
 
@@ -343,14 +453,3 @@ function flashButton(selector, message) {
     button.disabled = false;
   }, 1300);
 }
-
-hydrateMetrics();
-hydrateChecks();
-applyLevelUnlocks();
-applyMilestoneMessages();
-hydrateLetter();
-hydrateEvidence();
-hydrateReflection();
-hydrateAdmin();
-document.querySelector("#achievementForm").addEventListener("input", updateLetterSummary);
-updateOverall();

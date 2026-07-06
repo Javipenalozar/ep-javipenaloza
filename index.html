@@ -7,7 +7,61 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <div class="portal-shell">
+
+    <div id="cosmos-bg"><canvas></canvas></div>
+
+    <div class="login-overlay visible">
+      <div class="login-card">
+        <div class="login-brand">
+          <span class="brand-mark">JP</span>
+          <div>
+            <strong>EP</strong>
+            <small>Liderazgo es posible</small>
+          </div>
+        </div>
+
+        <div class="login-tabs">
+          <button type="button" class="login-tab active" data-tab="email">Email</button>
+          <button type="button" class="login-tab" data-tab="code">Código de activación</button>
+        </div>
+
+        <div class="login-panel active" id="login-email">
+          <form>
+            <label>
+              Correo electrónico
+              <input type="email" name="email" placeholder="tu@correo.com" required />
+            </label>
+            <label>
+              Contraseña
+              <input type="password" name="password" placeholder="Tu contraseña" required />
+            </label>
+            <p class="login-error"></p>
+            <button type="submit">Entrar</button>
+          </form>
+        </div>
+
+        <div class="login-panel" id="login-code">
+          <form>
+            <label>
+              Código de activación
+              <input type="text" name="code" placeholder="VALIOSO-1234" required />
+            </label>
+            <label>
+              Correo electrónico
+              <input type="email" name="email" placeholder="tu@correo.com" required />
+            </label>
+            <label>
+              Crea tu contraseña
+              <input type="password" name="password" placeholder="Mínimo 6 caracteres" required />
+            </label>
+            <p class="login-error"></p>
+            <button type="submit">Activar cuenta</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="portal-shell auth-hidden">
       <aside class="sidebar" aria-label="Menu del portal">
         <a href="#panel" class="brand">
           <span class="brand-mark">JP</span>
@@ -24,7 +78,8 @@
           <a href="#carta">Carta de logros</a>
           <a href="#niveles">Niveles</a>
           <a href="#reflexion">Reflexión</a>
-          <a href="#staff">Staff admin</a>
+          <a href="#tickets">Tickets</a>
+          <a href="#staff" data-role-min="staff">Staff admin</a>
           <a href="#acompanamiento">Acompañamiento</a>
           <a href="#recursos">Recursos</a>
         </nav>
@@ -33,6 +88,11 @@
           <span id="overallScore">0%</span>
           <small>avance integral</small>
           <div class="progress-track"><i id="overallBar"></i></div>
+        </div>
+
+        <div class="sidebar-user">
+          <span class="role-badge">—</span>
+          <button type="button" id="logoutBtn" class="quiet-button">Cerrar sesión</button>
         </div>
       </aside>
 
@@ -389,7 +449,50 @@
           </div>
         </section>
 
-        <section class="portal-section" id="staff">
+        <section class="portal-section" id="tickets">
+          <div class="section-title">
+            <div>
+              <span class="eyebrow">Entre niveles</span>
+              <h2>Tickets de transición</h2>
+            </div>
+            <button type="button" id="createTicket" data-role-min="staff">Crear ticket</button>
+          </div>
+
+          <div class="ticket-create-form admin-panel" id="ticketForm" hidden data-role-min="staff">
+            <strong>Asignar ticket a participante</strong>
+            <div class="form-row">
+              <label>
+                Participante
+                <select id="ticketParticipant"></select>
+              </label>
+              <label>
+                Transición
+                <select id="ticketTransition">
+                  <option value="nivel1-nivel2">Valioso → Valiente I</option>
+                  <option value="nivel2-nivel3">Valiente I → Valiente II</option>
+                  <option value="nivel3-nivel4">Valiente II → Poderoso</option>
+                  <option value="nivel4-confianza">Poderoso → Confianza</option>
+                  <option value="confianza-nivel5">Confianza → Supervivencia</option>
+                </select>
+              </label>
+            </div>
+            <label>
+              Título del ticket
+              <input id="ticketTitle" placeholder="Ej: Llamar a mamá y registrar la conversación" />
+            </label>
+            <label>
+              Descripción
+              <textarea id="ticketDesc" rows="3" placeholder="Instrucciones o contexto adicional para el participante"></textarea>
+            </label>
+            <button type="button" id="submitTicket">Asignar ticket</button>
+          </div>
+
+          <div id="ticketList">
+            <p class="empty-state">Cargando tickets...</p>
+          </div>
+        </section>
+
+        <section class="portal-section" id="staff" data-role-min="staff">
           <div class="section-title">
             <div>
               <span class="eyebrow">Vista privada</span>
@@ -547,6 +650,10 @@
       </main>
     </div>
 
+    <script src="cosmos.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="auth.js"></script>
+    <script src="tickets.js"></script>
     <script src="script.js"></script>
   </body>
 </html>
