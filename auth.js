@@ -36,6 +36,7 @@ async function onSession(session) {
   applyRoleVisibility(profile.role);
   hideLogin();
   await initPortal();
+  navigateTo("panel");
 }
 
 function applyRoleVisibility(role) {
@@ -159,6 +160,28 @@ async function handleLogout() {
   showLogin();
 }
 
+function navigateTo(sectionId) {
+  document.querySelectorAll(".portal-section").forEach((el) => {
+    el.classList.remove("section-visible");
+  });
+
+  const panelParts = document.querySelectorAll(".workspace-header, .today-grid, .level-message, .sidebar-progress");
+
+  if (sectionId === "panel") {
+    panelParts.forEach((el) => (el.style.display = ""));
+  } else {
+    panelParts.forEach((el) => (el.style.display = "none"));
+    const target = document.querySelector(`#${sectionId}`);
+    if (target) target.classList.add("section-visible");
+  }
+
+  document.querySelectorAll(".side-nav a").forEach((a) => {
+    a.classList.toggle("active", a.getAttribute("href") === `#${sectionId}`);
+  });
+
+  document.querySelector(".portal-main")?.scrollTo(0, 0);
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   document.querySelectorAll(".login-tab").forEach((tab) => {
     tab.addEventListener("click", () => switchLoginTab(tab.dataset.tab));
@@ -172,6 +195,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const logoutBtn = document.querySelector("#logoutBtn");
   if (logoutBtn) logoutBtn.addEventListener("click", handleLogout);
+
+  document.querySelectorAll(".side-nav a").forEach((link) => {
+    link.addEventListener("click", (e) => {
+      e.preventDefault();
+      const id = link.getAttribute("href").replace("#", "");
+      navigateTo(id);
+    });
+  });
 
   initAuth();
 });

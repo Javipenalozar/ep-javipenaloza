@@ -382,9 +382,14 @@ h1 {
 }
 
 .portal-section {
-  scroll-margin-top: 24px;
   margin-top: 18px;
+  display: none;
 }
+
+.portal-section.section-visible {
+  display: block;
+}
+
 
 .section-title {
   display: flex;
@@ -830,6 +835,7 @@ input[type="checkbox"] {
 .support-grid button {
   margin-top: 16px;
 }
+
 
 @media (max-width: 1100px) {
   .portal-shell {
