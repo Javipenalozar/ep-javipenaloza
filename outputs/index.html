@@ -4,10 +4,89 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>PROGRAMA DE LIDERAZGO ES POSIBLE EP</title>
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="styles.css?v=11" />
   </head>
   <body>
-    <div class="portal-shell">
+
+    <div id="cosmos-bg"><canvas></canvas></div>
+
+    <div class="login-overlay visible">
+      <canvas id="login-stars"></canvas>
+
+      <div class="login-visual">
+        <img src="assets/level-poderoso.png" alt="" />
+        <div class="login-visual-fade"></div>
+        <div class="login-visual-text">
+          <h1>Tu universo interior comienza aquí</h1>
+          <p>Cada nivel es un portal hacia una versión más poderosa de ti.</p>
+        </div>
+      </div>
+
+      <div class="login-right">
+        <div class="login-card">
+          <div class="login-brand">
+            <span class="brand-mark">JP</span>
+            <div>
+              <strong>EP</strong>
+              <small>Liderazgo es posible</small>
+            </div>
+          </div>
+
+          <h2>Ingresa al portal</h2>
+          <p class="login-subtitle">Conecta con tu proceso de transformación</p>
+
+          <div class="login-tabs">
+            <button type="button" class="login-tab active" data-tab="email">Email</button>
+            <button type="button" class="login-tab" data-tab="code">Código de activación</button>
+          </div>
+
+          <div class="login-panel active" id="login-email">
+            <form>
+              <label>
+                Correo electrónico
+                <input type="email" name="email" placeholder="tu@correo.com" required />
+              </label>
+              <label>
+                Contraseña
+                <input type="password" name="password" placeholder="Tu contraseña" required />
+              </label>
+              <p class="login-error"></p>
+              <button type="submit">Entrar al portal</button>
+            </form>
+          </div>
+
+          <div class="login-panel" id="login-code">
+            <form>
+              <label>
+                Código de activación
+                <input type="text" name="code" placeholder="VALIOSO-1234" required />
+              </label>
+              <label>
+                Correo electrónico
+                <input type="email" name="email" placeholder="tu@correo.com" required />
+              </label>
+              <label>
+                Crea tu contraseña
+                <input type="password" name="password" placeholder="Mínimo 6 caracteres" required />
+              </label>
+              <label class="consent-check">
+                <input type="checkbox" name="consent" required />
+                <span>
+                  He leído y acepto el
+                  <a href="consentimiento-informado-liderazgo-es-posible-ep.pdf" target="_blank" rel="noopener">
+                    consentimiento informado y tratamiento de datos personales
+                  </a>.
+                </span>
+              </label>
+              <p class="login-error"></p>
+              <button type="submit">Activar cuenta</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="portal-shell auth-hidden">
       <aside class="sidebar" aria-label="Menu del portal">
         <a href="#panel" class="brand">
           <span class="brand-mark">JP</span>
@@ -19,20 +98,29 @@
 
         <nav class="side-nav">
           <a href="#panel" class="active">Panel</a>
-          <a href="#semana">Mi semana</a>
-          <a href="#indicadores">Indicadores</a>
-          <a href="#carta">Carta de logros</a>
-          <a href="#niveles">Niveles</a>
-          <a href="#reflexion">Reflexión</a>
-          <a href="#staff">Staff admin</a>
-          <a href="#acompanamiento">Acompañamiento</a>
-          <a href="#recursos">Recursos</a>
+          <a href="#semana" data-role-max="participant">Mi semana</a>
+          <a href="#indicadores" data-role-max="participant">Indicadores</a>
+          <a href="#carta" data-role-max="participant">Carta de logros</a>
+          <a href="#niveles" data-role-max="participant">Niveles</a>
+          <a href="#reflexion" data-role-max="participant">Reflexión</a>
+          <a href="#actividades" data-role-max="participant">Actividades pendientes</a>
+          <a href="#tickets">Tickets</a>
+          <a href="#staff" data-role-min="staff">Staff admin</a>
+          <a href="#mini-equipo" data-role-min="staff">Mi mini equipo</a>
+          <a href="#acompanamiento" data-role-max="participant">Acompañamiento</a>
+          <a href="#recursos" data-role-max="participant">Recursos</a>
         </nav>
 
         <div class="sidebar-progress">
           <span id="overallScore">0%</span>
           <small>avance integral</small>
           <div class="progress-track"><i id="overallBar"></i></div>
+        </div>
+
+        <div class="sidebar-user">
+          <span class="role-badge">—</span>
+          <small class="session-email">Sin sesión</small>
+          <button type="button" id="logoutBtn" class="quiet-button">Cerrar sesión</button>
         </div>
       </aside>
 
@@ -90,14 +178,18 @@
               Comenzaste. Dedicaste un fin de semana completo para ti. Bienvenid@ a
               este mundo de transformacion personal.
             </p>
+            <p>
+              Felicitaciones: lograste el 4% del proceso. Iniciaste, ya recorriste
+              el 4% de este entrenamiento. Vamos por mas.
+            </p>
           </div>
           <div class="message-actions">
-            <strong>Elige 4</strong>
+            <strong>4%</strong>
             <a href="#reflexion" class="action-link">Registrar que me llevo</a>
           </div>
         </section>
 
-        <section class="portal-section" id="semana">
+        <section class="portal-section" id="semana" data-role-max="participant">
           <div class="section-title">
             <div>
               <span class="eyebrow">Bitacora de proceso</span>
@@ -143,11 +235,45 @@
           </div>
         </section>
 
-        <section class="portal-section" id="indicadores">
+        <section class="portal-section" id="indicadores" data-role-max="participant">
           <div class="section-title">
             <div>
               <span class="eyebrow">Medicion viva</span>
               <h2>Indicadores de avance</h2>
+            </div>
+            <button type="button" id="saveMetricRecord">Guardar registro semanal</button>
+          </div>
+
+          <div class="metric-register">
+            <label>
+              Semana a registrar
+              <select id="metricWeekSelect">
+                <option>Semana 1</option>
+                <option>Semana 2</option>
+                <option>Semana 3</option>
+                <option>Semana 4</option>
+                <option>Semana 5</option>
+                <option>Semana 6</option>
+                <option>Semana 7</option>
+                <option>Semana 8</option>
+                <option>Semana 9</option>
+                <option>Semana 10</option>
+                <option>Semana 11</option>
+                <option>Semana 12</option>
+                <option>Semana 13</option>
+                <option>Semana 14</option>
+                <option>Semana 15</option>
+                <option>Semana 16</option>
+              </select>
+              <small id="metricWeekStatus">La semana inicia cada lunes a las 00:00.</small>
+            </label>
+            <label>
+              Observacion de la semana
+              <input id="metricNote" placeholder="Que explica estos numeros esta semana..." />
+            </label>
+            <div class="metric-register-summary">
+              <span>Promedio semanal</span>
+              <strong id="metricWeeklyAverage">0%</strong>
             </div>
           </div>
 
@@ -185,9 +311,19 @@
               <p>Impacto positivo en familia, equipo, comunidad o proyecto.</p>
             </article>
           </div>
+
+          <div class="metric-history-panel">
+            <div>
+              <span class="eyebrow">Record personal</span>
+              <h3>Historial de indicadores</h3>
+            </div>
+            <div id="metricHistory" class="metric-history">
+              <p class="empty-state">Aun no hay registros semanales.</p>
+            </div>
+          </div>
         </section>
 
-        <section class="portal-section" id="carta">
+        <section class="portal-section" id="carta" data-role-max="participant">
           <div class="section-title">
             <div>
               <span class="eyebrow">Contrato contigo</span>
@@ -195,7 +331,7 @@
             </div>
             <div class="section-actions">
               <button type="button" id="saveLetter">Guardar carta</button>
-              <button type="button" class="quiet-button" id="printLetter">PDF</button>
+              <button type="button" class="quiet-button" id="printLetter">Descargar PDF</button>
             </div>
           </div>
 
@@ -249,9 +385,64 @@
               </label>
             </div>
           </form>
+
+          <aside class="letter-preview" id="letterPreview">
+            <div>
+              <span class="eyebrow">Record personal</span>
+              <h3>Historial de tu carta de logros</h3>
+              <p>Cada guardado crea una versión fechada de tu carta. Así podrás mirar tu evolución, comparar tus metas y reconocer lo que vas conquistando.</p>
+            </div>
+            <div id="letterSavedSummary" class="letter-saved-summary">
+              <p class="empty-state">Aun no hay una carta guardada.</p>
+            </div>
+            <div id="letterVersionList" class="letter-version-list">
+              <p class="empty-state">Aun no hay versiones guardadas.</p>
+            </div>
+          </aside>
+
+          <section class="letter-print-area" id="letterPrintArea" aria-hidden="true">
+            <div class="print-letter-cover">
+              <span>PROGRAMA DE LIDERAZGO ES POSIBLE EP</span>
+              <h1>Carta de logros</h1>
+              <p id="printLetterName">Participante</p>
+              <small id="printLetterDate">Proceso de transformación personal</small>
+            </div>
+            <div class="print-letter-kpis">
+              <div>
+                <span>Indicadores</span>
+                <strong id="printGoalCount">0</strong>
+              </div>
+              <div>
+                <span>Avance promedio</span>
+                <strong id="printAverageProgress">0%</strong>
+              </div>
+              <div>
+                <span>Fecha meta</span>
+                <strong id="printTargetDate">Sin fecha</strong>
+              </div>
+            </div>
+            <div class="print-letter-section">
+              <h2>Declaracion principal</h2>
+              <p id="printDeclaration">Sin declaracion registrada.</p>
+            </div>
+            <div class="print-letter-section">
+              <h2>Indicadores medibles</h2>
+              <div id="printGoals" class="print-goals"></div>
+            </div>
+            <div class="print-letter-grid">
+              <div>
+                <h2>Compromiso semanal</h2>
+                <p id="printWeekly">Sin compromiso registrado.</p>
+              </div>
+              <div>
+                <h2>Persona testigo</h2>
+                <p id="printWitness">Sin testigo registrado.</p>
+              </div>
+            </div>
+          </section>
         </section>
 
-        <section class="portal-section" id="niveles">
+        <section class="portal-section" id="niveles" data-role-max="participant">
           <div class="section-title">
             <div>
               <span class="eyebrow">Ruta del programa</span>
@@ -286,7 +477,7 @@
                 <p>Conexion con tu ser, talentos, valores, heridas y creencias que ya no suman.</p>
                 <small class="unlock-note">Se desbloquea el 6 de julio.</small>
               </div>
-              <label class="check-pill"><input type="checkbox" data-check="nivel1" /> Completo</label>
+              <label class="check-pill"><input type="checkbox" data-check="nivel1" /> <span>Pendiente automático</span></label>
             </article>
             <article class="level-row" id="nivel-valiente-1" data-unlock="2026-08-10" data-level-name="Nivel 2 Valiente I">
               <img src="assets/level-valiente-1.png" alt="Imagen conceptual del nivel Valiente I" />
@@ -296,7 +487,7 @@
                 <p>Confronta tus miedos, reconoce tus emociones y convierte desafios en oportunidades de expansion.</p>
                 <small class="unlock-note">Se desbloquea el 10 de agosto.</small>
               </div>
-              <label class="check-pill"><input type="checkbox" data-check="nivel2" /> Completo</label>
+              <label class="check-pill"><input type="checkbox" data-check="nivel2" /> <span>Pendiente automático</span></label>
             </article>
             <article class="level-row" id="nivel-valiente-2" data-unlock="2026-08-31" data-level-name="Nivel 3 Valiente II">
               <img src="assets/level-valiente-2.png" alt="Imagen conceptual del nivel Valiente II" />
@@ -306,7 +497,7 @@
                 <p>Libera culpa y resentimiento, reconcilia tu historia y escribe una version mas luminosa de ti.</p>
                 <small class="unlock-note">Se desbloquea el 31 de agosto.</small>
               </div>
-              <label class="check-pill"><input type="checkbox" data-check="nivel3" /> Completo</label>
+              <label class="check-pill"><input type="checkbox" data-check="nivel3" /> <span>Pendiente automático</span></label>
             </article>
             <article class="level-row" id="nivel-poderoso" data-unlock="2026-09-14" data-level-name="Nivel 4 Poderoso">
               <img src="assets/level-poderoso.png" alt="Imagen conceptual del nivel Poderoso" />
@@ -316,7 +507,7 @@
                 <p>Liderazgo personal, servicio colectivo e influencia desde autenticidad.</p>
                 <small class="unlock-note">Se desbloquea el 14 de septiembre.</small>
               </div>
-              <label class="check-pill"><input type="checkbox" data-check="nivel4" /> Completo</label>
+              <label class="check-pill"><input type="checkbox" data-check="nivel4" /> <span>Pendiente automático</span></label>
             </article>
             <article class="level-row" id="nivel-confianza" data-unlock="2026-09-25" data-level-name="Noche de confianza">
               <img src="assets/level-confianza.png" alt="Imagen conceptual de la Noche de confianza" />
@@ -326,7 +517,7 @@
                 <p>Reconocimiento interior, gratitud, vision y preparacion para el salto final.</p>
                 <small class="unlock-note">Se desbloquea el 25 de septiembre.</small>
               </div>
-              <label class="check-pill"><input type="checkbox" data-check="confianza" /> Completo</label>
+              <label class="check-pill"><input type="checkbox" data-check="confianza" /> <span>Pendiente automático</span></label>
             </article>
             <article class="level-row" id="nivel-supervivencia" data-unlock="2026-10-19" data-level-name="Nivel 5 Supervivencia">
               <img src="assets/level-supervivencia.png" alt="Imagen conceptual del nivel Supervivencia" />
@@ -336,12 +527,12 @@
                 <p>Reto final fuera de la ciudad: naturaleza, resiliencia y sabiduria encarnada.</p>
                 <small class="unlock-note">Se desbloquea el 19 de octubre.</small>
               </div>
-              <label class="check-pill"><input type="checkbox" data-check="nivel5" /> Completo</label>
+              <label class="check-pill"><input type="checkbox" data-check="nivel5" /> <span>Pendiente automático</span></label>
             </article>
           </div>
         </section>
 
-        <section class="portal-section" id="reflexion">
+        <section class="portal-section" id="reflexion" data-role-max="participant">
           <div class="section-title">
             <div>
               <span class="eyebrow">Integracion posterior</span>
@@ -387,15 +578,97 @@
               <small>El staff puede revisar y aprobar lo cargado desde el módulo admin.</small>
             </aside>
           </div>
+
+          <div class="reflection-record-panel">
+            <div>
+              <span class="eyebrow">Record personal</span>
+              <h3>Mis reflexiones guardadas</h3>
+              <p>Este es tu historial de integración. Cada reflexión queda guardada por nivel para que puedas volver a leer tu proceso.</p>
+            </div>
+            <div id="reflectionRecord" class="reflection-record">
+              <p class="empty-state">Aun no tienes reflexiones guardadas.</p>
+            </div>
+          </div>
         </section>
 
-        <section class="portal-section" id="staff">
+        <section class="portal-section" id="tickets">
+          <div class="section-title">
+            <div>
+              <span class="eyebrow">Entre niveles</span>
+              <h2>Tickets de transición</h2>
+            </div>
+            <button type="button" id="createTicket" data-role-min="staff">Crear ticket</button>
+          </div>
+
+          <div class="ticket-create-form admin-panel" id="ticketForm" hidden data-role-min="staff">
+            <strong>Asignar ticket a participante</strong>
+            <div class="form-row">
+              <label>
+                Participante
+                <select id="ticketParticipant"></select>
+              </label>
+              <label>
+                Transición
+                <select id="ticketTransition">
+                  <option value="nivel1-nivel2">Valioso → Valiente I</option>
+                  <option value="nivel2-nivel3">Valiente I → Valiente II</option>
+                  <option value="nivel3-nivel4">Valiente II → Poderoso</option>
+                  <option value="nivel4-confianza">Poderoso → Confianza</option>
+                  <option value="confianza-nivel5">Confianza → Supervivencia</option>
+                </select>
+              </label>
+            </div>
+            <label>
+              Título del ticket
+              <input id="ticketTitle" placeholder="Ej: Llamar a mamá y registrar la conversación" />
+            </label>
+            <label>
+              Descripción
+              <textarea id="ticketDesc" rows="3" placeholder="Instrucciones o contexto adicional para el participante"></textarea>
+            </label>
+            <button type="button" id="submitTicket">Asignar ticket</button>
+          </div>
+
+          <div id="ticketList">
+            <p class="empty-state">Cargando tickets...</p>
+          </div>
+        </section>
+
+        <section class="portal-section" id="actividades" data-role-max="participant">
+          <div class="section-title">
+            <div>
+              <span class="eyebrow">Guías y tareas</span>
+              <h2>Actividades pendientes</h2>
+            </div>
+            <button type="button" class="quiet-button" id="refreshActivities">Actualizar</button>
+          </div>
+
+          <div class="activities-layout">
+            <article class="activity-panel">
+              <strong>Guías del staff</strong>
+              <p>Materiales, instrucciones y recursos cargados para los niveles que ya están disponibles.</p>
+              <div id="participantResourceList" class="activity-list">
+                <p class="empty-state">No hay guías disponibles todavía.</p>
+              </div>
+            </article>
+
+            <article class="activity-panel">
+              <strong>Tickets pendientes</strong>
+              <p>Acciones específicas asignadas por staff entre un nivel y otro.</p>
+              <div id="pendingActivityTickets" class="activity-list">
+                <p class="empty-state">No tienes tickets pendientes.</p>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="portal-section" id="staff" data-role-min="staff">
           <div class="section-title">
             <div>
               <span class="eyebrow">Vista privada</span>
-              <h2>Staff admin</h2>
+              <h2>Seguimiento del staff</h2>
             </div>
-            <button type="button" id="approveReflection">Aprobar reflexión actual</button>
+            <button type="button" id="refreshAdmin">Actualizar seguimiento</button>
           </div>
 
           <div class="admin-grid">
@@ -404,52 +677,62 @@
               <div class="form-row">
                 <label>
                   Nombres
-                  <input id="participantFirstName" placeholder="Nombres del participante" />
+                  <input id="participantFirstName" placeholder="Nombres del participante" autocomplete="given-name" required minlength="2" />
                 </label>
                 <label>
                   Apellidos
-                  <input id="participantLastName" placeholder="Apellidos del participante" />
+                  <input id="participantLastName" placeholder="Apellidos del participante" autocomplete="family-name" required minlength="2" />
                 </label>
               </div>
               <div class="form-row">
                 <label>
                   WhatsApp
-                  <input id="participantWhatsapp" placeholder="+57 300 000 0000" />
+                  <input id="participantWhatsapp" type="tel" inputmode="tel" placeholder="+57 300 000 0000" autocomplete="tel" pattern="^(\+?57\s?)?3\d{2}\s?\d{3}\s?\d{4}$" required />
+                  <small class="field-hint">Formato: +57 300 000 0000 o 300 000 0000</small>
                 </label>
                 <label>
                   Correo
-                  <input id="participantEmail" type="email" placeholder="correo@ejemplo.com" />
+                  <input id="participantEmail" type="email" placeholder="correo@ejemplo.com" autocomplete="email" required />
                 </label>
               </div>
               <div class="form-row">
                 <label>
-                  Cohorte
-                  <input id="participantCohort" value="Julio - Octubre 2026" />
+                  Nombre de la Visión
+                  <input id="participantCohort" placeholder="Ej: Vision Valioso 2026" value="Visión Julio - Octubre 2026" required minlength="3" />
                 </label>
                 <label>
                   Código inicial
-                  <input id="activationCode" value="VALIOSO-4821" />
+                  <input id="activationCode" value="VALIOSO-4821" pattern="^[A-ZÁÉÍÓÚÑ0-9-]{4,24}$" required />
+                  <small class="field-hint">Usa letras mayúsculas, números y guion.</small>
                 </label>
               </div>
               <div class="form-row">
                 <label>
                   Contacto emergencia - nombres
-                  <input id="emergencyFirstName" placeholder="Nombres" />
+                  <input id="emergencyFirstName" placeholder="Nombres" autocomplete="off" required minlength="2" />
                 </label>
                 <label>
                   Contacto emergencia - apellidos
-                  <input id="emergencyLastName" placeholder="Apellidos" />
+                  <input id="emergencyLastName" placeholder="Apellidos" autocomplete="off" required minlength="2" />
                 </label>
               </div>
               <label>
                 Número del contacto de emergencia
-                <input id="emergencyPhone" placeholder="+57 300 000 0000" />
+                <input id="emergencyPhone" type="tel" inputmode="tel" placeholder="+57 300 000 0000" autocomplete="tel" pattern="^(\+?57\s?)?3\d{2}\s?\d{3}\s?\d{4}$" required />
+                <small class="field-hint">Debe ser celular colombiano con indicativo +57.</small>
               </label>
               <button type="button" class="quiet-button" id="saveParticipant">Guardar participante</button>
             </article>
 
             <article class="admin-panel">
               <strong>Cargar material del nivel</strong>
+              <label>
+                Material para
+                <select id="resourceAudience">
+                  <option value="participants">Participantes</option>
+                  <option value="staff">Staff</option>
+                </select>
+              </label>
               <label>
                 Nivel
                 <select id="adminLevel">
@@ -462,8 +745,19 @@
                 </select>
               </label>
               <label>
+                Destino
+                <select id="resourceParticipant">
+                  <option value="">Todos mis participantes</option>
+                </select>
+              </label>
+              <label>
                 Nombre del recurso
                 <input id="resourceTitle" placeholder="Ej: Guia de integración Valiente I" />
+              </label>
+              <label>
+                Archivo descargable
+                <input id="resourceFile" type="file" />
+                <small class="field-hint">PDF, imagen, audio o documento para que el participante lo descargue.</small>
               </label>
               <label>
                 Enlace o instrucción
@@ -472,8 +766,76 @@
               <button type="button" class="quiet-button" id="saveResource">Cargar recurso</button>
             </article>
 
+            <article class="admin-panel admin-activity-panel" data-role-min="admin">
+              <strong>Bitácora general</strong>
+              <div class="approval-list admin-activity-list" id="adminActivityFeed">
+                <p>No hay movimientos registrados todavía.</p>
+              </div>
+            </article>
+
+            <article class="admin-panel" data-role-min="admin">
+              <strong>Asignar mini equipos</strong>
+              <p class="panel-note">Elige qué staff acompaña a cada participante. Ese campo alimenta la pestaña “Mi mini equipo”.</p>
+              <label>
+                Staff responsable
+                <select id="miniTeamStaffSelect">
+                  <option value="">Selecciona un staff</option>
+                </select>
+              </label>
+              <label>
+                Participante
+                <select id="miniTeamParticipantSelect">
+                  <option value="">Selecciona un participante</option>
+                </select>
+              </label>
+              <button type="button" class="quiet-button" id="assignMiniTeam">Asignar a mini equipo</button>
+            </article>
+
+            <article class="admin-panel" data-role-min="staff">
+              <strong>Disponibilidad de acompañamiento</strong>
+              <p class="panel-note">Habilita horarios para que los participantes puedan reservar coaching o acompañamiento psicológico.</p>
+              <label>
+                Tipo de sesión
+                <select id="supportSlotType">
+                  <option value="coaching">Coaching individual</option>
+                  <option value="psicologico">Acompañamiento psicológico</option>
+                </select>
+              </label>
+              <div class="form-row">
+                <label>
+                  Fecha
+                  <input id="supportSlotDate" type="date" />
+                </label>
+                <label>
+                  Cupos
+                  <input id="supportSlotCapacity" type="number" min="1" max="20" value="1" />
+                </label>
+              </div>
+              <div class="form-row">
+                <label>
+                  Hora inicio
+                  <input id="supportSlotStart" type="time" />
+                </label>
+                <label>
+                  Hora fin
+                  <input id="supportSlotEnd" type="time" />
+                </label>
+              </div>
+              <button type="button" class="quiet-button" id="saveSupportSlot">Habilitar horario</button>
+              <div class="approval-list" id="supportSlotAdminList">
+                <p>No hay horarios habilitados.</p>
+              </div>
+            </article>
+
             <article class="admin-panel">
-              <strong>Revisión de participantes</strong>
+              <strong>Repositorio de participantes</strong>
+              <div class="approval-list participant-progress-list" id="participantProgressList">
+                <p>No hay avances registrados todavía.</p>
+              </div>
+            </article>
+
+            <article class="admin-panel">
+              <strong>Reflexiones por aprobar</strong>
               <div class="approval-list" id="approvalList">
                 <p>No hay reflexiones enviadas todavía.</p>
               </div>
@@ -495,46 +857,213 @@
           </div>
         </section>
 
-        <section class="portal-section" id="acompanamiento">
+        <section class="portal-section" id="mini-equipo" data-role-min="staff">
+          <div class="section-title">
+            <div>
+              <span class="eyebrow">Seguimiento cercano</span>
+              <h2>Cómo va mi mini equipo</h2>
+            </div>
+            <button type="button" id="refreshMiniTeam">Actualizar mini equipo</button>
+          </div>
+
+          <div class="mini-team-layout">
+            <article class="admin-panel">
+              <strong>Material interno para staff</strong>
+              <div class="approval-list" id="staffResourceList">
+                <p>No hay material interno cargado todavía.</p>
+              </div>
+            </article>
+
+            <article class="admin-panel mini-team-panel">
+              <strong>Checks por participante</strong>
+              <div class="approval-list" id="miniTeamList">
+                <p>No hay participantes asignados todavía.</p>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="portal-section" id="acompanamiento" data-role-max="participant">
           <div class="section-title">
             <div>
               <span class="eyebrow">Red de apoyo</span>
               <h2>Acompañamiento</h2>
             </div>
+            <button type="button" class="quiet-button" id="refreshSupport">Actualizar historial</button>
           </div>
 
           <div class="support-grid">
-            <article>
+            <article class="support-panel" data-support-type="coaching">
               <strong>Coaching individual</strong>
-              <p>Agenda, prepara preguntas y registra acuerdos de cada sesion.</p>
-              <button type="button" class="quiet-button">Registrar sesion</button>
+              <p>Elige uno de los horarios habilitados y prepara tus preguntas.</p>
+              <label>
+                Horario disponible
+                <select data-support-field="slot">
+                  <option value="">Cargando horarios...</option>
+                </select>
+              </label>
+              <label>
+                Tema principal
+                <input data-support-field="topic" placeholder="Ej: liderazgo, límites, conversación pendiente" />
+              </label>
+              <label>
+                Acuerdos o tareas
+                <textarea data-support-field="notes" rows="4" placeholder="Qué acordamos y cuál es el siguiente paso..."></textarea>
+              </label>
+              <button type="button" class="quiet-button support-save">Guardar sesión</button>
             </article>
-            <article>
+            <article class="support-panel" data-support-type="psicologico">
               <strong>Acompañamiento psicologico</strong>
-              <p>Seguimiento emocional, alertas de cuidado y avances conversados.</p>
-              <button type="button" class="quiet-button">Anotar seguimiento</button>
+              <p>Elige un espacio disponible para seguimiento emocional y cuidado.</p>
+              <label>
+                Horario disponible
+                <select data-support-field="slot">
+                  <option value="">Cargando horarios...</option>
+                </select>
+              </label>
+              <label>
+                Estado emocional
+                <input data-support-field="topic" placeholder="Ej: ansiedad, calma, duelo, claridad" />
+              </label>
+              <label>
+                Observaciones de cuidado
+                <textarea data-support-field="notes" rows="4" placeholder="Qué necesito cuidar, pausar o conversar con el profesional..."></textarea>
+              </label>
+              <button type="button" class="quiet-button support-save">Guardar seguimiento</button>
             </article>
-            <article>
+            <article class="support-panel" data-support-type="buddy">
               <strong>Buddy de responsabilidad</strong>
               <p>Check-in semanal con un compañero para sostener compromisos.</p>
-              <button type="button" class="quiet-button">Crear check-in</button>
+              <label>
+                Fecha
+                <input type="date" data-support-field="date" />
+              </label>
+              <label>
+                Persona buddy
+                <input data-support-field="topic" placeholder="Nombre de tu compañero/a" />
+              </label>
+              <label>
+                Compromiso revisado
+                <textarea data-support-field="notes" rows="4" placeholder="Qué revisamos, qué cumplí y qué voy a sostener..."></textarea>
+              </label>
+              <button type="button" class="quiet-button support-save">Guardar check-in</button>
             </article>
+          </div>
+
+          <div class="support-record-panel">
+            <div>
+              <span class="eyebrow">Historial</span>
+              <h3>Mis registros de acompañamiento</h3>
+            </div>
+            <div id="supportRecordList" class="support-record-list">
+              <p class="empty-state">Aún no hay registros de acompañamiento.</p>
+            </div>
           </div>
         </section>
 
-        <section class="portal-section" id="recursos">
+        <section class="portal-section" id="recursos" data-role-max="participant">
           <div class="section-title">
             <div>
               <span class="eyebrow">Herramientas</span>
               <h2>Recursos recomendados</h2>
             </div>
+            <button type="button" class="quiet-button" id="refreshResourceTools">Actualizar historial</button>
           </div>
 
           <div class="resource-grid">
-            <article><strong>Diagnostico inicial y final</strong><p>Comparativo 1-10 para medir transformacion real.</p></article>
-            <article><strong>Feedback 360</strong><p>Validacion de cambios observables por 3 personas cercanas.</p></article>
-            <article><strong>Biblioteca de practicas</strong><p>Audios, ejercicios, meditaciones y retos por nivel.</p></article>
-            <article><strong>Proyecto de impacto</strong><p>Una accion de servicio que demuestre liderazgo en el entorno.</p></article>
+            <article class="resource-tool" data-resource-type="diagnostico">
+              <strong>Diagnóstico inicial y final</strong>
+              <p>Comparativo 1-10 para medir transformación real.</p>
+              <label>
+                Momento
+                <select data-resource-field="title">
+                  <option value="Diagnóstico inicial">Diagnóstico inicial</option>
+                  <option value="Diagnóstico intermedio">Diagnóstico intermedio</option>
+                  <option value="Diagnóstico final">Diagnóstico final</option>
+                </select>
+              </label>
+              <label>
+                Resultado
+                <input type="number" min="1" max="10" data-resource-field="score" placeholder="1 a 10" />
+              </label>
+              <label>
+                Observación
+                <textarea rows="4" data-resource-field="notes" placeholder="Qué explica este resultado..."></textarea>
+              </label>
+              <button type="button" class="quiet-button resource-tool-save">Guardar diagnóstico</button>
+            </article>
+            <article class="resource-tool" data-resource-type="feedback">
+              <strong>Feedback 360</strong>
+              <p>Validación de cambios observables por 3 personas cercanas.</p>
+              <label>
+                Persona
+                <input data-resource-field="title" placeholder="Nombre de quien te dio feedback" />
+              </label>
+              <label>
+                Área observada
+                <input data-resource-field="score" placeholder="Ej: comunicación, límites, liderazgo" />
+              </label>
+              <label>
+                Feedback recibido
+                <textarea rows="4" data-resource-field="notes" placeholder="Qué cambio vio en ti..."></textarea>
+              </label>
+              <button type="button" class="quiet-button resource-tool-save">Guardar feedback</button>
+            </article>
+            <article class="resource-tool" data-resource-type="practica">
+              <strong>Biblioteca de prácticas</strong>
+              <p>Audios, ejercicios, meditaciones y retos por nivel.</p>
+              <label>
+                Práctica realizada
+                <input data-resource-field="title" placeholder="Ej: respiración, carta, meditación" />
+              </label>
+              <label>
+                Nivel
+                <select data-resource-field="score">
+                  <option value="Valioso">Valioso</option>
+                  <option value="Valiente I">Valiente I</option>
+                  <option value="Valiente II">Valiente II</option>
+                  <option value="Poderoso">Poderoso</option>
+                  <option value="Noche de confianza">Noche de confianza</option>
+                  <option value="Supervivencia">Supervivencia</option>
+                </select>
+              </label>
+              <label>
+                Integración
+                <textarea rows="4" data-resource-field="notes" placeholder="Qué me dejó esta práctica..."></textarea>
+              </label>
+              <button type="button" class="quiet-button resource-tool-save">Guardar práctica</button>
+            </article>
+            <article class="resource-tool" data-resource-type="impacto">
+              <strong>Proyecto de impacto</strong>
+              <p>Una acción de servicio que demuestre liderazgo en el entorno.</p>
+              <label>
+                Nombre del proyecto
+                <input data-resource-field="title" placeholder="Ej: conversación familiar, acción comunitaria" />
+              </label>
+              <label>
+                Estado
+                <select data-resource-field="score">
+                  <option value="Idea">Idea</option>
+                  <option value="En progreso">En progreso</option>
+                  <option value="Realizado">Realizado</option>
+                </select>
+              </label>
+              <label>
+                Evidencia o siguiente paso
+                <textarea rows="4" data-resource-field="notes" placeholder="Qué hice, qué impacto tuvo o qué sigue..."></textarea>
+              </label>
+              <button type="button" class="quiet-button resource-tool-save">Guardar proyecto</button>
+            </article>
+          </div>
+
+          <div class="resource-record-panel">
+            <div>
+              <span class="eyebrow">Historial</span>
+              <h3>Mis recursos trabajados</h3>
+            </div>
+            <div id="resourceToolRecordList" class="resource-record-list">
+              <p class="empty-state">Aún no hay recursos registrados.</p>
+            </div>
           </div>
 
           <div class="palette-guide" aria-label="Paleta visual del portal">
@@ -547,6 +1076,10 @@
       </main>
     </div>
 
-    <script src="script.js"></script>
+    <script src="cosmos.js?v=11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="auth.js?v=11"></script>
+    <script src="tickets.js?v=11"></script>
+    <script src="script.js?v=11"></script>
   </body>
 </html>
