@@ -190,13 +190,13 @@ async function handleCodeActivation(e) {
   }
 
   if (signUpData?.user) {
-    const { data: result } = await sb.rpc("activate_participant", {
+    const { data: result } = await sb.rpc("activate_portal_account", {
       p_code: code,
       p_auth_id: signUpData.user.id,
     });
 
     if (result && !result.success) {
-      errorEl.textContent = "Código no válido. Verifica con tu staff.";
+      errorEl.textContent = "Código no válido. Verifica que el acceso haya sido creado por el admin.";
       await sb.auth.signOut();
       btn.disabled = false;
       btn.textContent = "Activar cuenta";
@@ -208,8 +208,9 @@ async function handleCodeActivation(e) {
       .eq("id", signUpData.user.id)
       .maybeSingle();
 
-    if (profileError || normalizeRole(activatedProfile?.role) !== "participant") {
-      errorEl.textContent = "Este correo no quedó como participante. Usa un correo nuevo o corrige el rol en Supabase.";
+    const activatedRole = normalizeRole(activatedProfile?.role);
+    if (profileError || !["participant", "staff", "admin"].includes(activatedRole)) {
+      errorEl.textContent = "Este correo no quedó activo en el portal. Usa un correo nuevo o corrige el rol en Supabase.";
       await sb.auth.signOut();
       btn.disabled = false;
       btn.textContent = "Activar cuenta";

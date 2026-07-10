@@ -106,6 +106,7 @@
           <a href="#actividades" data-role-max="participant">Actividades pendientes</a>
           <a href="#tickets">Tickets</a>
           <a href="#staff" data-role-min="staff">Staff admin</a>
+          <a href="#staff-registro" data-role-min="admin">Agregar staff</a>
           <a href="#mini-equipo" data-role-min="staff">Mi mini equipo</a>
           <a href="#acompanamiento" data-role-max="participant">Acompañamiento</a>
           <a href="#recursos" data-role-max="participant">Recursos</a>
@@ -852,6 +853,66 @@
               <strong>Recursos cargados</strong>
               <div class="approval-list" id="resourceList">
                 <p>No hay recursos cargados.</p>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="portal-section" id="staff-registro" data-role-min="admin">
+          <div class="section-title">
+            <div>
+              <span class="eyebrow">Administración</span>
+              <h2>Agregar staff</h2>
+            </div>
+            <button type="button" id="refreshStaffDirectory">Actualizar staff</button>
+          </div>
+
+          <div class="staff-admin-layout">
+            <article class="admin-panel">
+              <strong>Crear acceso de staff</strong>
+              <p class="panel-note">El staff entra con este código inicial, su correo y una contraseña. Al activarse queda con rol staff.</p>
+              <div class="form-row">
+                <label>
+                  Nombres
+                  <input id="staffFirstName" placeholder="Nombres del staff" autocomplete="given-name" required minlength="2" />
+                </label>
+                <label>
+                  Apellidos
+                  <input id="staffLastName" placeholder="Apellidos del staff" autocomplete="family-name" required minlength="2" />
+                </label>
+              </div>
+              <div class="form-row">
+                <label>
+                  WhatsApp
+                  <input id="staffWhatsapp" type="tel" inputmode="tel" placeholder="+57 300 000 0000" autocomplete="tel" pattern="^(\+?57\s?)?3\d{2}\s?\d{3}\s?\d{4}$" required />
+                  <small class="field-hint">Formato: +57 300 000 0000 o 300 000 0000</small>
+                </label>
+                <label>
+                  Correo
+                  <input id="staffEmail" type="email" placeholder="staff@ejemplo.com" autocomplete="email" required />
+                </label>
+              </div>
+              <div class="form-row">
+                <label>
+                  Rol operativo
+                  <select id="staffRole">
+                    <option value="staff">Staff</option>
+                    <option value="admin">Admin</option>
+                  </select>
+                </label>
+                <label>
+                  Código inicial
+                  <input id="staffActivationCode" value="STAFF-4821" pattern="^[A-ZÁÉÍÓÚÑ0-9-]{4,24}$" required />
+                  <small class="field-hint">Usa letras mayúsculas, números y guion.</small>
+                </label>
+              </div>
+              <button type="button" class="quiet-button" id="saveStaffMember">Guardar staff</button>
+            </article>
+
+            <article class="admin-panel">
+              <strong>Staff creados</strong>
+              <div class="approval-list" id="staffDirectoryList">
+                <p>No hay staff registrados todavía.</p>
               </div>
             </article>
           </div>

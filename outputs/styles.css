@@ -912,6 +912,12 @@ input[type="checkbox"] {
   gap: 14px;
 }
 
+.staff-admin-layout {
+  display: grid;
+  grid-template-columns: minmax(320px, 0.9fr) minmax(0, 1.1fr);
+  gap: 14px;
+}
+
 .activities-layout {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(320px, 0.75fr);
@@ -1428,6 +1434,7 @@ input[type="checkbox"] {
   .reflection-form,
   .reflection-record,
   .admin-grid,
+  .staff-admin-layout,
   .support-grid,
   .support-record-list,
   .resource-grid,
@@ -1463,6 +1470,7 @@ input[type="checkbox"] {
   .reflection-form,
   .reflection-record,
   .admin-grid,
+  .staff-admin-layout,
   .support-grid,
   .support-record-list,
   .resource-grid,

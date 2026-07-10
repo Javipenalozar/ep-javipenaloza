@@ -788,6 +788,7 @@ function renderReflectionRecord() {
 
 function hydrateAdmin() {
   bindRegistrationFormatting();
+  bindStaffRegistration();
 
   document.querySelector("#saveParticipant").addEventListener("click", async () => {
     const registrationFields = [
@@ -931,10 +932,20 @@ function hydrateAdmin() {
     await saveSupportSlot();
   });
 
+  document.querySelector("#saveStaffMember")?.addEventListener("click", async () => {
+    await saveStaffMember();
+  });
+
+  document.querySelector("#refreshStaffDirectory")?.addEventListener("click", async () => {
+    await renderStaffDirectory();
+    flashButton("#refreshStaffDirectory", "Actualizado");
+  });
+
   loadResourceParticipantOptions();
   loadMiniTeamAssignmentOptions();
   renderSupportSlotAdminList();
   renderAdminLists();
+  renderStaffDirectory();
 }
 
 async function loadResourceParticipantOptions() {
@@ -1528,6 +1539,7 @@ async function saveMiniTeamCheck(check) {
 function bindRegistrationFormatting() {
   ["participantWhatsapp", "emergencyPhone"].forEach((id) => {
     const input = document.querySelector(`#${id}`);
+    if (!input) return;
     input.addEventListener("blur", () => {
       if (input.value.trim() && input.checkValidity()) {
         input.value = formatColombianPhone(input.value);
@@ -1536,14 +1548,123 @@ function bindRegistrationFormatting() {
   });
 
   const activationCode = document.querySelector("#activationCode");
+  if (!activationCode) return;
   activationCode.addEventListener("input", () => {
     activationCode.value = activationCode.value.toUpperCase().replace(/[^A-ZÁÉÍÓÚÑ0-9-]/g, "");
   });
 
   const email = document.querySelector("#participantEmail");
+  if (!email) return;
   email.addEventListener("blur", () => {
     email.value = email.value.trim().toLowerCase();
   });
+}
+
+function bindStaffRegistration() {
+  const phone = document.querySelector("#staffWhatsapp");
+  if (phone) {
+    phone.addEventListener("blur", () => {
+      if (phone.value.trim() && phone.checkValidity()) {
+        phone.value = formatColombianPhone(phone.value);
+      }
+    });
+  }
+
+  const code = document.querySelector("#staffActivationCode");
+  if (code) {
+    code.addEventListener("input", () => {
+      code.value = code.value.toUpperCase().replace(/[^A-ZÁÉÍÓÚÑ0-9-]/g, "");
+    });
+  }
+
+  const email = document.querySelector("#staffEmail");
+  if (email) {
+    email.addEventListener("blur", () => {
+      email.value = email.value.trim().toLowerCase();
+    });
+  }
+}
+
+async function saveStaffMember() {
+  if (!currentProfile || currentProfile.role !== "admin") return;
+
+  const fields = [
+    "#staffFirstName",
+    "#staffLastName",
+    "#staffWhatsapp",
+    "#staffEmail",
+    "#staffActivationCode",
+  ].map((selector) => document.querySelector(selector));
+
+  const invalidField = fields.find((field) => field && !field.checkValidity());
+  if (invalidField) {
+    invalidField.reportValidity();
+    flashButton("#saveStaffMember", "Revisa los datos");
+    return;
+  }
+
+  const firstName = document.querySelector("#staffFirstName").value.trim();
+  const lastName = document.querySelector("#staffLastName").value.trim();
+  const whatsapp = formatColombianPhone(document.querySelector("#staffWhatsapp").value);
+  const email = document.querySelector("#staffEmail").value.trim().toLowerCase();
+  const role = document.querySelector("#staffRole").value;
+  const code = document.querySelector("#staffActivationCode").value.trim().toUpperCase();
+
+  const { data, error } = await sb.rpc("preregister_staff", {
+    p_first_name: firstName,
+    p_last_name: lastName,
+    p_whatsapp: whatsapp,
+    p_email: email,
+    p_code: code,
+    p_role: role,
+  });
+
+  if (error || data?.success === false) {
+    flashButton("#saveStaffMember", "Error al guardar");
+    return;
+  }
+
+  ["staffFirstName", "staffLastName", "staffWhatsapp", "staffEmail"].forEach((id) => {
+    document.querySelector(`#${id}`).value = "";
+  });
+  document.querySelector("#staffRole").value = "staff";
+  document.querySelector("#staffActivationCode").value = generateStaffActivationCode();
+  await renderStaffDirectory();
+  await loadMiniTeamAssignmentOptions();
+  flashButton("#saveStaffMember", "Staff guardado");
+}
+
+async function renderStaffDirectory() {
+  const container = document.querySelector("#staffDirectoryList");
+  if (!container || !currentProfile || currentProfile.role !== "admin") return;
+
+  const [activeRes, pendingRes] = await Promise.all([
+    sb.from("profiles").select("id, first_name, last_name, email, whatsapp, role, created_at").in("role", ["staff", "admin"]).order("first_name", { ascending: true }),
+    sb.from("pending_staff").select("*").order("created_at", { ascending: false }),
+  ]);
+
+  if (activeRes.error && pendingRes.error) {
+    container.innerHTML = '<p class="empty-state">No pudimos cargar el staff.</p>';
+    return;
+  }
+
+  const activeItems = (activeRes.data || []).map((staff) => `
+    <div class="approval-item">
+      <span>${escapeHtml(staff.role === "admin" ? "Admin activo" : "Staff activo")}</span>
+      <p><strong>${escapeHtml(displayPersonName(staff, "Staff"))}</strong><br>${escapeHtml(staff.email || staff.whatsapp || "Sin contacto")}</p>
+    </div>
+  `);
+
+  const pendingItems = (pendingRes.data || []).map((staff) => `
+    <div class="approval-item">
+      <span>${escapeHtml(staff.role === "admin" ? "Admin pendiente" : "Staff pendiente")} · código ${escapeHtml(staff.activation_code || "")}</span>
+      <p><strong>${escapeHtml(displayPersonName(staff, "Staff"))}</strong><br>${escapeHtml(staff.email || staff.whatsapp || "Sin contacto")}</p>
+    </div>
+  `);
+
+  container.innerHTML = [...pendingItems, ...activeItems].length
+    ? [...pendingItems, ...activeItems].join("")
+    : '<p class="empty-state">No hay staff registrados todavía.</p>';
 }
 
 function formatColombianPhone(value) {
@@ -1871,6 +1992,10 @@ function renderParticipantProgress(participant, data) {
 
 function generateActivationCode() {
   return `VALIOSO-${Math.floor(1000 + Math.random() * 9000)}`;
+}
+
+function generateStaffActivationCode() {
+  return `STAFF-${Math.floor(1000 + Math.random() * 9000)}`;
 }
 
 function escapeHtml(value) {

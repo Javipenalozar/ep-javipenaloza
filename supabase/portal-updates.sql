@@ -252,6 +252,109 @@ $$;
 
 grant execute on function public.get_level_progress() to authenticated;
 
+-- Pre-registro y activación de staff creado por admin.
+create table if not exists public.pending_staff (
+  id uuid primary key default gen_random_uuid(),
+  first_name text not null,
+  last_name text,
+  whatsapp text,
+  email text not null,
+  activation_code text not null unique,
+  role text not null default 'staff' check (role in ('staff', 'admin')),
+  created_by uuid references public.profiles(id) on delete set null,
+  created_at timestamptz not null default now()
+);
+
+alter table public.pending_staff enable row level security;
+
+drop policy if exists "Admins can read pending staff" on public.pending_staff;
+create policy "Admins can read pending staff"
+on public.pending_staff
+for select
+using (
+  exists (
+    select 1
+    from public.profiles
+    where id = auth.uid()
+      and role = 'admin'
+  )
+);
+
+drop policy if exists "Admins can create pending staff" on public.pending_staff;
+create policy "Admins can create pending staff"
+on public.pending_staff
+for insert
+with check (
+  exists (
+    select 1
+    from public.profiles
+    where id = auth.uid()
+      and role = 'admin'
+  )
+);
+
+create or replace function public.preregister_staff(
+  p_first_name text,
+  p_last_name text,
+  p_whatsapp text,
+  p_email text,
+  p_code text,
+  p_role text default 'staff'
+)
+returns jsonb
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  clean_role text := lower(coalesce(p_role, 'staff'));
+begin
+  if not exists (
+    select 1
+    from public.profiles
+    where id = auth.uid()
+      and role = 'admin'
+  ) then
+    return jsonb_build_object('success', false, 'message', 'Solo admin puede crear staff.');
+  end if;
+
+  if clean_role not in ('staff', 'admin') then
+    clean_role := 'staff';
+  end if;
+
+  insert into public.pending_staff (
+    first_name,
+    last_name,
+    whatsapp,
+    email,
+    activation_code,
+    role,
+    created_by
+  )
+  values (
+    trim(p_first_name),
+    trim(p_last_name),
+    p_whatsapp,
+    lower(trim(p_email)),
+    upper(trim(p_code)),
+    clean_role,
+    auth.uid()
+  )
+  on conflict (activation_code)
+  do update set
+    first_name = excluded.first_name,
+    last_name = excluded.last_name,
+    whatsapp = excluded.whatsapp,
+    email = excluded.email,
+    role = excluded.role,
+    created_by = excluded.created_by;
+
+  return jsonb_build_object('success', true);
+end;
+$$;
+
+grant execute on function public.preregister_staff(text, text, text, text, text, text) to authenticated;
+
 -- Activación segura de participantes.
 -- Fuerza role = 'participant' para evitar que un registro por código herede rol staff/admin.
 create or replace function public.activate_participant(
@@ -319,6 +422,67 @@ end;
 $$;
 
 grant execute on function public.activate_participant(text, uuid) to authenticated;
+
+-- Activación general por código: participante o staff.
+create or replace function public.activate_portal_account(
+  p_code text,
+  p_auth_id uuid
+)
+returns jsonb
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  staff_record public.pending_staff%rowtype;
+  participant_result jsonb;
+begin
+  select *
+  into staff_record
+  from public.pending_staff
+  where upper(activation_code) = upper(p_code)
+  limit 1;
+
+  if found then
+    insert into public.profiles (
+      id,
+      first_name,
+      last_name,
+      email,
+      whatsapp,
+      role,
+      created_at
+    )
+    values (
+      p_auth_id,
+      staff_record.first_name,
+      staff_record.last_name,
+      staff_record.email,
+      staff_record.whatsapp,
+      staff_record.role,
+      now()
+    )
+    on conflict (id)
+    do update set
+      first_name = excluded.first_name,
+      last_name = excluded.last_name,
+      email = excluded.email,
+      whatsapp = excluded.whatsapp,
+      role = excluded.role;
+
+    return jsonb_build_object('success', true, 'role', staff_record.role);
+  end if;
+
+  participant_result := public.activate_participant(p_code, p_auth_id);
+  if coalesce((participant_result->>'success')::boolean, false) then
+    return participant_result || jsonb_build_object('role', 'participant');
+  end if;
+
+  return jsonb_build_object('success', false, 'message', 'Código no válido.');
+end;
+$$;
+
+grant execute on function public.activate_portal_account(text, uuid) to authenticated;
 
 -- Corrección del usuario de prueba creado durante QA local.
 update public.profiles
