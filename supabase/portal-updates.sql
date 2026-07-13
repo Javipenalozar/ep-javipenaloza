@@ -2,6 +2,14 @@
 -- Cambios requeridos para guardar el record semanal de indicadores.
 -- Ejecutar en Supabase SQL editor antes de publicar esta version.
 
+-- Compatibilidad de perfiles: el portal usa email para registrar, listar y activar
+-- participantes/staff. Algunas bases creadas antes no tienen esta columna.
+alter table public.profiles add column if not exists email text;
+
+create unique index if not exists profiles_email_unique_idx
+on public.profiles (lower(email))
+where email is not null;
+
 create table if not exists public.metric_records (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null references public.profiles(id) on delete cascade,
